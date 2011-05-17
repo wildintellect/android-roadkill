@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_height="wrap_content"
+	android:layout_width="fill_parent">
+	<ScrollView android:layout_marginBottom="50dip" android:id="@+id/ScrollView01" android:layout_height="wrap_content" android:layout_width="fill_parent">
+		<LinearLayout android:orientation="vertical"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent">
+			<RelativeLayout android:id="@+id/relativeLayout1" android:gravity="center_horizontal|center_vertical" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_weight="6">
+				<TextView android:id="@+id/field" android:gravity="center_horizontal" android:layout_height="wrap_content" android:text="No Image" android:layout_width="fill_parent"></TextView>
+				<ImageView android:layout_height="wrap_content" android:id="@+id/image" android:layout_width="fill_parent"></ImageView>
+			</RelativeLayout>
+			<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:orientation="vertical">
+				<Button android:layout_width="fill_parent" android:layout_weight="1" android:text="Take Photo" android:layout_height="wrap_content" android:id="@+id/button"></Button>
+				<TextView
+					android:id="@+id/username"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:text="Username"
+					android:textSize="30sp"
+					android:gravity="center">
+				</TextView>
+				<TextView
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:text="Select animal type">
+				</TextView>
+				<Spinner
+					android:id="@+id/animalspinner"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:drawSelectorOnTop = "true">
+				</Spinner>
+				<EditText
+					android:id="@+id/animaltext"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:textSize="20sp"
+					android:hint="Other/Species type"
+					android:gravity="left"
+					android:lines="1"
+					android:inputType="text"
+					android:nextFocusDown="@+id/latText">
+				</EditText>
+				<TextView
+					android:text="Road Name"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:textSize="20sp">
+				</TextView>
+				<EditText
+					android:id="@+id/roadName"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:textSize="20sp"
+					android:hint="Street name, Highway no., etc."
+					android:gravity="left">
+				</EditText>
+				<TextView
+					android:id="@+id/dateText"
+					android:text="Date Stamp"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:textSize="20sp">
+				</TextView>
+				<TextView
+					android:id="@+id/dateVal"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:textSize="20sp"
+					android:text="Date/Time from picture"
+					android:gravity="left">
+				</TextView>
+				<TextView
+					android:id="@+id/latText"
+					android:text="Latitude"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:textSize="20sp">
+				</TextView>
+				<TextView
+					android:id="@+id/latVal"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:textSize="20sp"
+					android:text="Latitude from picture"
+					android:gravity="left">
+				</TextView>
+				<TextView
+					android:text="Longitude"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:textSize="20sp">
+				</TextView>
+				<TextView
+					android:id="@+id/longVal"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:textSize="20sp"
+					android:text="Longitude from picture"
+					android:gravity="left">
+				</TextView>
+				<Button
+					android:id="@+id/submitButton"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:text="Submit Observation"
+					android:textSize="20sp">
+				</Button>
+			</LinearLayout>
+		</LinearLayout>
+	</ScrollView>
+</LinearLayout>

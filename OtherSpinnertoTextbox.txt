@@ -1,0 +1,35 @@
+        sp.setOnItemSelectedListener(new OnItemSelectedListener() {
+        
+        	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
+        long arg3) {
+        		int item = sp.getSelectedItemPosition();
+        		
+        		// check if item is Other and if so, allow text to be entered
+        		if (item == 11) {
+        			// animaltext requests focus
+        			
+        			aT.setFocusable(true);
+        			sp.setFocusable(false);
+        			aT.setFocusableInTouchMode(true);
+        			aT.setEnabled(true);
+        			aT.requestFocus();
+        			// Set value to aText to test later to get real animal value
+        			aText = "Atext";
+        			}
+        		else {
+	        		
+	        		Toast.makeText(getBaseContext(), "You have selected " + animalList[item],
+	        				Toast.LENGTH_SHORT).show();
+	        		aText = null;
+	                aT = (TextView) findViewById(R.id.animaltext);
+	                aT.setFocusable(false);
+	                aT.setFocusableInTouchMode(false);
+        		}
+        }
+        
+			public void onNothingSelected(AdapterView<?> arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+
