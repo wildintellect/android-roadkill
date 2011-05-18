@@ -1,6 +1,7 @@
 package edu.davis.CROS.RoadkillSite;
 
 import java.io.File;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -15,13 +16,12 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 public class RoadkillSite extends Activity 
 {
@@ -31,23 +31,6 @@ public class RoadkillSite extends Activity
 	protected String _path;
 	protected boolean _taken;
 
-
-	String[] animalList = 
-	{
-			"Deer",
-			"Bear",
-			"Mountain Lion",
-			"Raccoon",
-			"Squirrel",
-			"Rodent",
-			"Skunk",
-			"Bird",
-			"Lizard",
-			"Cat",
-			"Dog",
-			"Rabbit/Hare",
-			"Other",
-	};
 	Spinner sp;
 	TextView aT;
     ExifInterface exif;
@@ -77,7 +60,8 @@ public class RoadkillSite extends Activity
 
         
         ArrayAdapter<String> adapter = new ArrayAdapter<String> (this,
-        		android.R.layout.simple_spinner_dropdown_item, animalList);
+        		//TODO: linked animal list to static list, need to now make it dynamic from sqlitedb
+        		android.R.layout.simple_spinner_dropdown_item, dbAdapter.animalList);
         sp = (Spinner)findViewById(R.id.animalspinner);
         sp.setAdapter(adapter);
         aT = (TextView) findViewById(R.id.animaltext);
@@ -88,22 +72,16 @@ public class RoadkillSite extends Activity
         
         sp.setOnItemSelectedListener(new OnItemSelectedListener() {
         
-        	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
-        long arg3) {
+        	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,long arg3) {
         		int item = sp.getSelectedItemPosition();
-
+        		
     			aT.setFocusableInTouchMode(true);
     			
     			InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE); 
-    			imm.hideSoftInputFromWindow(aT.getWindowToken(), 0);
-    			
-
-    	    	
+    			imm.hideSoftInputFromWindow(aT.getWindowToken(), 0);	
    			
-        }
+        	}
         	
- 		
-
         
 			public void onNothingSelected(AdapterView<?> arg0) {
 				// TODO Auto-generated method stub
