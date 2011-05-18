@@ -6,7 +6,7 @@
 --Todo: how to store a local password for use with a web service and have it be secure from snooping?
 CREATE TABLE users (
 localid int not null,
-username text,
+username text UNIQUE,
 email text,
 state text,
 zipcode text,
@@ -15,5 +15,13 @@ passwordhash text,
 
 --Table for storing records of observations
 CREATE TABLE records (
-username ForeignKey,
+username text,
+species text,
+--should we link to allow multiple photos per spot?
+photo,
+lat REAL,
+lon REAL,
+time text,
+uploaded int default 0,
+FOREIGN KEY (username) REFERENCES users(username)
 )

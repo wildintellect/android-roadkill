@@ -2,4 +2,8 @@
 <resources>
     <string name="hello">Hello World, RoadkillSite!</string>
     <string name="app_name">Roadkill Site</string>
+    <string name="user">user</string>
+    <string name="map">map</string>
+    <string name="location">Location</string>
+    <string name="datetime">Date and Time</string>
 </resources>

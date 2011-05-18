@@ -1,4 +1,4 @@
-package edu.davis.CROS.RoadkillSite;
+package edu.davis.cros.roadkill;
 
 import java.io.File;
 
@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -23,7 +25,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
 
-public class RoadkillSite extends Activity 
+public class roadkill extends Activity 
 {
 	protected Button _button;
 	protected ImageView _image;
@@ -59,9 +61,8 @@ public class RoadkillSite extends Activity
         setContentView(R.layout.main);
 
         
-        ArrayAdapter<String> adapter = new ArrayAdapter<String> (this,
-        		//TODO: linked animal list to static list, need to now make it dynamic from sqlitedb
-        		android.R.layout.simple_spinner_dropdown_item, dbAdapter.animalList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String> (this,android.R.layout.simple_spinner_dropdown_item, dbAdapter.animalList);
+        //TODO: linked animal list to static list, need to now make it dynamic from sqlitedb
         sp = (Spinner)findViewById(R.id.animalspinner);
         sp.setAdapter(adapter);
         aT = (TextView) findViewById(R.id.animaltext);
@@ -73,7 +74,7 @@ public class RoadkillSite extends Activity
         sp.setOnItemSelectedListener(new OnItemSelectedListener() {
         
         	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,long arg3) {
-        		int item = sp.getSelectedItemPosition();
+        		//int item = sp.getSelectedItemPosition();
         		
     			aT.setFocusableInTouchMode(true);
     			
@@ -242,14 +243,21 @@ public class RoadkillSite extends Activity
     // This is used so the image does not disappear when phone is rotated
     protected void onRestoreInstanceState( Bundle savedInstanceState){
     	Log.i( "MakeMachine", "onRestoreInstanceState()");
-    	if( savedInstanceState.getBoolean( RoadkillSite.PHOTO_TAKEN ) ) {
+    	if( savedInstanceState.getBoolean( roadkill.PHOTO_TAKEN ) ) {
     		onPhotoTaken();
     	}
     }
     
     @Override
- // This is used so the image does not disappear when phone is rotated
+    // This is used so the image does not disappear when phone is rotated
     protected void onSaveInstanceState( Bundle outState ) {
-    	outState.putBoolean( RoadkillSite.PHOTO_TAKEN, _taken );
+    	outState.putBoolean( roadkill.PHOTO_TAKEN, _taken );
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.view_menu, menu);
+        return true;
     }
 }
