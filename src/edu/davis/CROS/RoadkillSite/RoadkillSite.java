@@ -74,6 +74,8 @@ public class RoadkillSite extends Activity
         super.onCreate(savedInstanceState);
         
         setContentView(R.layout.main);
+        // TODO: control what happens when you rotate to landscape view
+        
 
         
         ArrayAdapter<String> adapter = new ArrayAdapter<String> (this,
@@ -92,7 +94,7 @@ public class RoadkillSite extends Activity
         long arg3) {
         		int item = sp.getSelectedItemPosition();
 
-    			aT.setFocusableInTouchMode(true);
+    			
     			
     			InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE); 
     			imm.hideSoftInputFromWindow(aT.getWindowToken(), 0);
