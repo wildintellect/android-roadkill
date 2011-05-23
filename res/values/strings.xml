@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="hello">Hello World, RoadkillSite!</string>
-    <string name="app_name">Roadkill Site</string>
+    <string name="app_name">RoadKill</string>
     <string name="user">user</string>
     <string name="map">map</string>
     <string name="location">Location</string>
