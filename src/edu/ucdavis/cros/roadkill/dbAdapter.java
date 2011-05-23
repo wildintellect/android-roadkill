@@ -1,4 +1,4 @@
-package edu.davis.cros.roadkill;
+package edu.ucdavis.cros.roadkill;
 //This module handles all the database interaction
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

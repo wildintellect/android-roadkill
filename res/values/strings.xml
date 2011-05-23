@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, RoadkillSite!</string>
-    <string name="app_name">RoadKill</string>
+    <string name="hello">Hello World, roadkill!</string>
+    <string name="app_name">roadkill</string>
     <string name="user">user</string>
     <string name="map">map</string>
     <string name="location">Location</string>
     <string name="datetime">Date and Time</string>
+    <string name="settings">Settings</string>
+    <string name="species">Species</string>
 </resources>
