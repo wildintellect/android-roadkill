@@ -2,6 +2,7 @@ package edu.ucdavis.cros.roadkill;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -34,6 +35,8 @@ public class roadkill extends Activity {
         	@Override
         	public void onClick(View v) {
         		//Call the code to take the picture
+        		Log.i("MakeMachine", "ButtonClickHandler.onClick()" );
+        		
         		//return the photo to the button as a thumbnail
         		//return path to the photo for storage in the db
         		//return the exif data in the photo for date, time and location
