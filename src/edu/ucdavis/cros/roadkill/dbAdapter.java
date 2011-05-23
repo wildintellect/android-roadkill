@@ -25,6 +25,10 @@ public class dbAdapter {
 				"Dog",
 				"Rabbit/Hare",
 				"Other",
+				"Mammal/small",
+				"Mammal/medium",
+				"Mammal/large",
+				
 		};
 	
 	private DatabaseHelper mDbHelper;
