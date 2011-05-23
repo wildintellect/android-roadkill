@@ -10,12 +10,14 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class TakePhoto {
 	
 	protected String _path;
 	protected boolean _taken;
+	protected ImageView _image;
 	ExifInterface exif;
     File picFile;
     String strLat;
@@ -27,6 +29,7 @@ public class TakePhoto {
     String strLongC;
     String strLongRef;
     String strDateTime;
+    private Tools convertToDegree;
     
     protected static final String PHOTO_TAKEN	= "photo_taken";
     
@@ -41,7 +44,7 @@ public class TakePhoto {
     	intent.putExtra( MediaStore.EXTRA_OUTPUT, outputFileUri );
     	
     	// Tells camera to return to App with a result when done
-    	startActivityForResult( intent, 0 );
+    	//startActivityForResult( intent, 0 );
     }
 
 
@@ -76,26 +79,27 @@ public class TakePhoto {
     	strLongRef = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
     	strDateTime = exif.getAttribute(ExifInterface.TAG_DATETIME);
     	
- 
-		if(strLatRef.equals("N")){
-			fltLatC = convertToDegree(strLat);
-		}
-		else{
-			fltLatC = 0 - convertToDegree(strLat);
-		}
-		 
-		if(strLongRef.equals("E")){
-			fltLongC = convertToDegree(strLong);
-		}
-		else{
-			fltLongC = 0 - convertToDegree(strLong);
-		}
+//    	convertToDegree = new Tools();
+// 
+//		if(strLatRef.equals("N")){
+//			fltLatC = convertToDegree(strLat);
+//		}
+//		else{
+//			fltLatC = 0 - convertToDegree(strLat);
+//		}
+//		 
+//		if(strLongRef.equals("E")){
+//			fltLongC = convertToDegree(strLong);
+//		}
+//		else{
+//			fltLongC = 0 - convertToDegree(strLong);
+//		}
     	
 		
 		
-    	latT = (TextView)findViewById(R.id.latVal);
-    	longT = (TextView)findViewById(R.id.longVal);
-    	datetimeT = (TextView)findViewById(R.id.dateVal);
+    	//latT = (TextView)findViewById(R.id.latVal);
+    	//longT = (TextView)findViewById(R.id.longVal);
+    	//datetimeT = (TextView)findViewById(R.id.dateVal);
     	
     	fltLatC = fltLatC*1000000;
     	fltLongC = fltLongC*1000000;
@@ -103,11 +107,11 @@ public class TakePhoto {
     	strLatC = fltLatC.toString();
     	strLongC = fltLongC.toString();
     	
-    	latT.setText(strLatC);
-    	longT.setText(strLongC);
-    	datetimeT.setText(strDateTime);
+    	//latT.setText(strLatC);
+    	//longT.setText(strLongC);
+    	//datetimeT.setText(strDateTime);
     	
-    	_field.setVisibility( View.GONE );
+    	//_field.setVisibility( View.GONE );
 
     	
     }

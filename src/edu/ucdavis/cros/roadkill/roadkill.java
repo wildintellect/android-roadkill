@@ -7,6 +7,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -17,7 +19,7 @@ public class roadkill extends Activity {
 	private ImageButton photoButton;
 	private Button locationButton;
 	private Button dateButton;
-	private TextView Species;
+	private AutoCompleteTextView Species;
 
     /** Called when the activity is first created. */
     @Override
@@ -28,14 +30,18 @@ public class roadkill extends Activity {
         this.photoButton = (ImageButton)findViewById(R.id.photoButton);
         this.locationButton = (Button)findViewById(R.id.locationButton);
         this.dateButton = (Button)findViewById(R.id.dateButton);
-        this.Species = (TextView) findViewById(R.id.speciesTextView);
+        //this.Species = (TextView) findViewById(R.id.speciesTextView);
+        
+        ArrayAdapter<String> adapter = new ArrayAdapter<String> (this,android.R.layout.simple_dropdown_item_1line, dbAdapter.animalList);
+        this.Species = (AutoCompleteTextView) findViewById(R.id.speciesTextView);
+        Species.setAdapter(adapter);
         
         //Set up listeners for each button
         this.photoButton.setOnClickListener(new OnClickListener(){
         	@Override
         	public void onClick(View v) {
         		//Call the code to take the picture
-        		Log.i("MakeMachine", "ButtonClickHandler.onClick()" );
+        		Log.i("RoadKill", "photoButton.onClick()" );
         		
         		//return the photo to the button as a thumbnail
         		//return path to the photo for storage in the db
@@ -45,6 +51,7 @@ public class roadkill extends Activity {
     	this.locationButton.setOnClickListener(new OnClickListener(){
         	@Override
         	public void onClick(View v) {
+        		Log.i("RoadKill", "locationButton.onClick()" );
         		//open a selection window, 
         		//ask the user if they want the GPS fix
         		//or adjust manually on a map
@@ -54,16 +61,18 @@ public class roadkill extends Activity {
         	@Override
         	public void onClick(View v) {
         		//open a popup with a date/time selector widget
+        		Log.i("RoadKill", "dateButton.onClick()" );
         	}
     	});
         this.Species.setOnClickListener(new OnClickListener(){
         	@Override
         	public void onClick(View v) {
+        		Log.i("RoadKill", "Species.onClick()" );
         		//clear the Species label once the start typing
         		//auto match based on the pre-seeded data
-        		if (Species.getText() == "Species"){
-        				Species.setText("");
-        		}
+        		//if (Species.getText() == "Species"){
+        		//		Species.setText("");
+        		
         	}
     	});
     
