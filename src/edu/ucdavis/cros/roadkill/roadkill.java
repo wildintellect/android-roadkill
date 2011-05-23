@@ -34,7 +34,8 @@ public class roadkill extends Activity {
         ArrayAdapter<String> adapter = new ArrayAdapter<String> (this,android.R.layout.simple_dropdown_item_1line, dbAdapter.animalList);
         this.Species = (AutoCompleteTextView) findViewById(R.id.speciesTextView);
         Species.setAdapter(adapter);
-        
+        //TODO :Turn on GPS at application start/resume for better/faster fix
+
         //Set up listeners for each button
         this.photoButton.setOnClickListener(new OnClickListener(){
         	@Override
