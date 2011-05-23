@@ -33,24 +33,31 @@ public class roadkill extends Activity {
         this.photoButton.setOnClickListener(new OnClickListener(){
         	@Override
         	public void onClick(View v) {
-        		
-       	}
+        		//Call the code to take the picture
+        		//return the photo to the button as a thumbnail
+        		//return path to the photo for storage in the db
+        		//return the exif data in the photo for date, time and location
+        	}
         });
     	this.locationButton.setOnClickListener(new OnClickListener(){
         	@Override
         	public void onClick(View v) {
-        		
+        		//open a selection window, 
+        		//ask the user if they want the GPS fix
+        		//or adjust manually on a map
         	}
     	});
         this.dateButton.setOnClickListener(new OnClickListener(){
         	@Override
         	public void onClick(View v) {
-        		
+        		//open a popup with a date/time selector widget
         	}
     	});
-        Species.setOnClickListener(new OnClickListener(){
+        this.Species.setOnClickListener(new OnClickListener(){
         	@Override
         	public void onClick(View v) {
+        		//clear the Species label once the start typing
+        		//auto match based on the pre-seeded data
         		if (Species.getText() == "Species"){
         				Species.setText("");
         		}
@@ -61,6 +68,9 @@ public class roadkill extends Activity {
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+    	//Triggered from the device menu button
+    	//Allows user to reach other views and configure the application
+    	// TODO : implement opening views based on button picked, with onClick property in menu.xml
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.view_menu, menu);
         return true;
