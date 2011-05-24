@@ -9,9 +9,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 public class TakePhoto {
 	
@@ -50,7 +48,7 @@ public class TakePhoto {
 
 	protected void onPhotoTaken()
     {
-    	Log.i( "MakeMachine", "onPhotoTaken" );
+    	Log.i( "RoadKillPhoto", "onPhotoTaken" );
     	
     	_taken = true;
     	
