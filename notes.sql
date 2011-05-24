@@ -16,7 +16,8 @@ passwordhash text,
 --Table for storing records of observations
 CREATE TABLE records (
 username text,
-species text,
+category text,
+subcat text,
 --should we link to allow multiple photos per spot?
 photo,
 lat REAL,
@@ -25,3 +26,14 @@ time text,
 uploaded int default 0,
 FOREIGN KEY (username) REFERENCES users(username)
 )
+
+--Create a list of all the possible choices
+CREATE VIEW allspp AS
+SELECT DISTINCT category as list FROM species
+UNION
+SELECT DISTINCT subcat FROM species WHERE NOT NULL
+UNION
+SELECT common FROM species
+UNION
+SELECT scientific FROM species
+

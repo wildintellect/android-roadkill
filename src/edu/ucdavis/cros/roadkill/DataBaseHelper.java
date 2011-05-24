@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -18,11 +19,8 @@ public class DataBaseHelper extends SQLiteOpenHelper{
  
     //The Android's default system path of your application database.
     private static String DB_PATH = "/data/data/edu.ucdavis.cros.roadkill/databases/";
- 
     private static String DB_NAME = "roadkill.db";
- 
-    private SQLiteDatabase myDataBase; 
- 
+    private SQLiteDatabase myDataBase;  
     private final Context myContext;
  
     /**
@@ -52,13 +50,9 @@ public class DataBaseHelper extends SQLiteOpenHelper{
         	this.getReadableDatabase();
  
         	try {
- 
     			copyDataBase();
- 
     		} catch (IOException e) {
- 
         		throw new Error("Error copying database");
- 
         	}
     	}
  
@@ -71,23 +65,18 @@ public class DataBaseHelper extends SQLiteOpenHelper{
     private boolean checkDataBase(){
  
     	SQLiteDatabase checkDB = null;
- 
     	try{
     		String myPath = DB_PATH + DB_NAME;
     		checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
  
     	}catch(SQLiteException e){
- 
     		//database does't exist yet.
- 
     	}
  
     	if(checkDB != null){
- 
     		checkDB.close();
- 
     	}
- 
+    	
     	return checkDB != null ? true : false;
     }
  
@@ -125,7 +114,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
  
     	//Open the database
         String myPath = DB_PATH + DB_NAME;
-    	myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
+    	myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE);
  
     }
  
@@ -152,5 +141,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
         // Add your public helper methods to access and get content from the database.
        // You could return cursors by doing "return myDataBase.query(....)" so it'd be easy
        // to you to create adapters for your views.
- 
+	public Cursor spplist(){
+		return myDataBase.query("allspp",new String[] {"list"}, null, null, null, null, null);
+	}
 }

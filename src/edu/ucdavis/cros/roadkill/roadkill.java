@@ -3,6 +3,7 @@ package edu.ucdavis.cros.roadkill;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -13,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.SimpleCursorAdapter;
 
 
 public class roadkill extends Activity {
@@ -21,6 +23,7 @@ public class roadkill extends Activity {
 	private Button locationButton;
 	private Button dateButton;
 	private AutoCompleteTextView Species;
+	private Button saveButton;
 	//Declare Database
 	//private dbAdapter mDbHelper;
 	private DataBaseHelper myDbHelper;
@@ -47,13 +50,18 @@ public class roadkill extends Activity {
         this.photoButton = (ImageButton)findViewById(R.id.photoButton);
         this.locationButton = (Button)findViewById(R.id.locationButton);
         this.dateButton = (Button)findViewById(R.id.dateButton);
-        //this.Species = (TextView) findViewById(R.id.speciesTextView);
-        
+
+        //Cursor sppCursor = myDbHelper.spplist();
+        //startManagingCursor(sppCursor);
+        //String[] from = new String[]{"list"};
+        //int[] to = new int[]{R.id.speciesTextView};
+        //SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.simple_dropdown_item_1line, sppCursor, from, to);
         ArrayAdapter<String> adapter = new ArrayAdapter<String> (this,android.R.layout.simple_dropdown_item_1line, dbAdapter.animalList);
         this.Species = (AutoCompleteTextView) findViewById(R.id.speciesTextView);
         Species.setAdapter(adapter);
         //TODO :Turn on GPS at application start/resume for better/faster fix
-
+        this.saveButton = (Button)findViewById(R.id.saveButton);
+        
         //Set up listeners for each button
         this.photoButton.setOnClickListener(new OnClickListener(){
         	@Override
@@ -94,6 +102,14 @@ public class roadkill extends Activity {
         	}
     	});
     
+        this.saveButton.setOnClickListener(new OnClickListener(){
+        	@Override
+        	public void onClick(View v) {
+        		//save data to record, if existing record update information
+        		Log.i("RoadKill", "saveButton.onClick()" );
+        		
+        	}
+    	});
     }
     
     @Override
