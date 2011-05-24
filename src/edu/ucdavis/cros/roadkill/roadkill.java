@@ -1,5 +1,7 @@
 package edu.ucdavis.cros.roadkill;
 
+import java.io.IOException;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +21,10 @@ public class roadkill extends Activity {
 	private Button locationButton;
 	private Button dateButton;
 	private AutoCompleteTextView Species;
+	//Declare Database
+	//private dbAdapter mDbHelper;
+	private DataBaseHelper myDbHelper;
+
 
     /** Called when the activity is first created. */
     @Override
@@ -26,6 +32,18 @@ public class roadkill extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alt);
 
+        //mDbHelper = new dbAdapter(this);
+        //mDbHelper.open();
+        
+        //DataBaseHelper myDbHelper = new DataBaseHelper();
+        myDbHelper = new DataBaseHelper(this);
+ 
+        try { myDbHelper.createDataBase();
+        } catch (IOException ioe) {
+ 		throw new Error("Unable to create database"); 
+        }
+
+        
         this.photoButton = (ImageButton)findViewById(R.id.photoButton);
         this.locationButton = (Button)findViewById(R.id.locationButton);
         this.dateButton = (Button)findViewById(R.id.dateButton);
