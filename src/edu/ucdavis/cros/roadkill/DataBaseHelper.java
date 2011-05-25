@@ -142,6 +142,8 @@ public class DataBaseHelper extends SQLiteOpenHelper{
        // You could return cursors by doing "return myDataBase.query(....)" so it'd be easy
        // to you to create adapters for your views.
 	public Cursor spplist(){
+		//Cursor mCursor = myDataBase.query("allspp",new String[] {"list"}, null, null, null, null, null);
 		return myDataBase.query("allspp",new String[] {"list"}, null, null, null, null, null);
+		//return mCursor;
 	}
 }

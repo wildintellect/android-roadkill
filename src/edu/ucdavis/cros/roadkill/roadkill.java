@@ -50,15 +50,8 @@ public class roadkill extends Activity {
         this.photoButton = (ImageButton)findViewById(R.id.photoButton);
         this.locationButton = (Button)findViewById(R.id.locationButton);
         this.dateButton = (Button)findViewById(R.id.dateButton);
-
-        //Cursor sppCursor = myDbHelper.spplist();
-        //startManagingCursor(sppCursor);
-        //String[] from = new String[]{"list"};
-        //int[] to = new int[]{R.id.speciesTextView};
-        //SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.simple_dropdown_item_1line, sppCursor, from, to);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String> (this,android.R.layout.simple_dropdown_item_1line, dbAdapter.animalList);
-        this.Species = (AutoCompleteTextView) findViewById(R.id.speciesTextView);
-        Species.setAdapter(adapter);
+        splist();
+        
         //TODO :Turn on GPS at application start/resume for better/faster fix
         this.saveButton = (Button)findViewById(R.id.saveButton);
         
@@ -110,7 +103,24 @@ public class roadkill extends Activity {
         		
         	}
     	});
+    
     }
+    
+    private void splist() {
+    	//Set the species list from a database query
+    	//Cursor sppCursor = myDbHelper.spplist();
+        //startManagingCursor(sppCursor);
+        //String[] from = new String[]{"list"};
+        //int[] to = new int[]{R.id.speciesTextView};
+        //SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.simple_dropdown_item_1line, sppCursor, from, to);
+        
+    	//Method uses a straight string array
+    	ArrayAdapter<String> adapter = new ArrayAdapter<String> (this,android.R.layout.simple_dropdown_item_1line, dbAdapter.animalList);
+        
+        this.Species = (AutoCompleteTextView) findViewById(R.id.speciesTextView);
+        Species.setAdapter(adapter);
+    }
+    
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

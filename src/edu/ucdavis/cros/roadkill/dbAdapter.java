@@ -29,11 +29,11 @@ public class dbAdapter {
 				"Lizard",
 				"Cat",
 				"Dog",
-				"Rabbit/Hare",
+				"Rabbit / Hare",
 				"Other",
-				"Mammal/small",
-				"Mammal/medium",
-				"Mammal/large",
+				"Mammal small",
+				"Mammal medium",
+				"Mammal large",
 				
 		};
 	
