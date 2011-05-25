@@ -57,7 +57,7 @@ public class roadkill extends Activity {
         
         //Set up listeners for each button
         this.photoButton.setOnClickListener(new OnClickListener(){
-        	@Override
+//        	@Override
         	public void onClick(View v) {
         		//Call the code to take the picture
         		Log.i("RoadKill", "photoButton.onClick()" );
@@ -68,7 +68,7 @@ public class roadkill extends Activity {
         	}
         });
     	this.locationButton.setOnClickListener(new OnClickListener(){
-        	@Override
+//        	@Override
         	public void onClick(View v) {
         		Log.i("RoadKill", "locationButton.onClick()" );
         		//open a selection window, 
@@ -77,14 +77,14 @@ public class roadkill extends Activity {
         	}
     	});
         this.dateButton.setOnClickListener(new OnClickListener(){
-        	@Override
+//        	@Override
         	public void onClick(View v) {
         		//open a popup with a date/time selector widget
         		Log.i("RoadKill", "dateButton.onClick()" );
         	}
     	});
         this.Species.setOnClickListener(new OnClickListener(){
-        	@Override
+//        	@Override
         	public void onClick(View v) {
         		Log.i("RoadKill", "Species.onClick()" );
         		//clear the Species label once the start typing
@@ -96,7 +96,7 @@ public class roadkill extends Activity {
     	});
     
         this.saveButton.setOnClickListener(new OnClickListener(){
-        	@Override
+//        	@Override
         	public void onClick(View v) {
         		//save data to record, if existing record update information
         		Log.i("RoadKill", "saveButton.onClick()" );
