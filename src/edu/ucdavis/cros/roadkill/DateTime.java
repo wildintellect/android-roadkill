@@ -1,9 +1,5 @@
 package edu.ucdavis.cros.roadkill;
 
-import java.util.Calendar;
-
-import android.app.DatePickerDialog;
-import android.view.View;
 import android.widget.Button;
 
 public class DateTime {
