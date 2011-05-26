@@ -39,8 +39,8 @@ public class roadkill extends Activity {
 	private AutoCompleteTextView Species;
 	private Button saveButton;
 	//Declare Database
-	//private dbAdapter mDbHelper;
-	private DataBaseHelper myDbHelper;
+	private dbAdapter myDbHelper;
+	//private DataBaseHelper myDbHelper;
 	private int mYear;
     private int mMonth;
     private int mDay;
@@ -56,16 +56,16 @@ public class roadkill extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alt);
 
-        //mDbHelper = new dbAdapter(this);
-        //mDbHelper.open();
+        myDbHelper = new dbAdapter(this);
+        myDbHelper.open();
         
         //DataBaseHelper myDbHelper = new DataBaseHelper();
-        myDbHelper = new DataBaseHelper(this);
+        //myDbHelper = new DataBaseHelper(this);
  
-        try { myDbHelper.createDataBase();
-        } catch (IOException ioe) {
- 		throw new Error("Unable to create database"); 
-        }
+        //try { myDbHelper.createDataBase();
+        //} catch (IOException ioe) {
+ 		//throw new Error("Unable to create database"); 
+        //}
 
         
         this.photoButton = (ImageButton)findViewById(R.id.photoButton);
@@ -152,17 +152,17 @@ public class roadkill extends Activity {
     
     private void splist() {
     	//Set the species list from a database query
-    	//Cursor sppCursor = myDbHelper.spplist();
-        //startManagingCursor(sppCursor);
-        //String[] from = new String[]{"list"};
-        //int[] to = new int[]{R.id.speciesTextView};
-        //SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.simple_dropdown_item_1line, sppCursor, from, to);
+    	Cursor sppCursor = myDbHelper.spplist();
+        startManagingCursor(sppCursor);
+        String[] from = new String[]{"common"};
+        int[] to = new int[]{R.id.speciesTextView};
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.simple_dropdown_item_1line, sppCursor, from, to);
         
     	//Method uses a straight string array
-    	ArrayAdapter<String> adapter = new ArrayAdapter<String> (this,android.R.layout.simple_dropdown_item_1line, dbAdapter.animalList);
+    	//ArrayAdapter<String> adapter = new ArrayAdapter<String> (this,android.R.layout.simple_dropdown_item_1line, dbAdapter.animalList);
         
         this.Species = (AutoCompleteTextView) findViewById(R.id.speciesTextView);
-        Species.setAdapter(adapter);
+        this.Species.setAdapter(adapter);
     }
     
     
