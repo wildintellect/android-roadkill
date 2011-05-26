@@ -1,8 +1,15 @@
 package edu.ucdavis.cros.roadkill;
 
+/* TODO: Add license information, properly cite the Android dev code under Apache 2.0 license
+*
+*/
 import java.io.IOException;
+import java.util.Calendar;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,8 +20,10 @@ import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TimePicker;
 
 
 public class roadkill extends Activity {
@@ -22,11 +31,19 @@ public class roadkill extends Activity {
 	private ImageButton photoButton;
 	private Button locationButton;
 	private Button dateButton;
+	private Button timeButton;
 	private AutoCompleteTextView Species;
 	private Button saveButton;
 	//Declare Database
 	//private dbAdapter mDbHelper;
 	private DataBaseHelper myDbHelper;
+	private int mYear;
+    private int mMonth;
+    private int mDay;
+	static final int DATE_DIALOG_ID = 1;
+	private int mHour;
+    private int mMinute;
+    static final int TIME_DIALOG_ID = 2;
 
 	//testing comment
     /** Called when the activity is first created. */
@@ -50,10 +67,12 @@ public class roadkill extends Activity {
         this.photoButton = (ImageButton)findViewById(R.id.photoButton);
         this.locationButton = (Button)findViewById(R.id.locationButton);
         this.dateButton = (Button)findViewById(R.id.dateButton);
+        this.timeButton = (Button)findViewById(R.id.timeButton);
         splist();
         
         //TODO :Turn on GPS at application start/resume for better/faster fix
         this.saveButton = (Button)findViewById(R.id.saveButton);
+        
         
         //Set up listeners for each button
         this.photoButton.setOnClickListener(new OnClickListener(){
@@ -81,8 +100,29 @@ public class roadkill extends Activity {
         	public void onClick(View v) {
         		//open a popup with a date/time selector widget
         		Log.i("RoadKill", "dateButton.onClick()" );
+        		showDialog(DATE_DIALOG_ID);
         	}
     	});
+        //Setup the current date/time for the dialog
+        final Calendar c = Calendar.getInstance();
+        mYear = c.get(Calendar.YEAR);
+        mMonth = c.get(Calendar.MONTH);
+        mDay = c.get(Calendar.DAY_OF_MONTH);
+        //Enable the next line only if you want set the data immediately
+        //updateDisplay();
+        this.timeButton.setOnClickListener(new OnClickListener(){
+//        	@Override
+        	public void onClick(View v) {
+        		//open a popup with a date/time selector widget
+        		Log.i("RoadKill", "dateButton.onClick()" );
+        		showDialog(TIME_DIALOG_ID);
+        	}
+    	});
+        // get the current time
+        mHour = c.get(Calendar.HOUR_OF_DAY);
+        mMinute = c.get(Calendar.MINUTE);
+
+        
         this.Species.setOnClickListener(new OnClickListener(){
 //        	@Override
         	public void onClick(View v) {
@@ -131,6 +171,77 @@ public class roadkill extends Activity {
         inflater.inflate(R.menu.view_menu, menu);
         return true;
     }   
-        
+    
+    @Override
+    protected Dialog onCreateDialog(int id) {
+            switch (id) {
+
+            case DATE_DIALOG_ID:
+                    return new DatePickerDialog(this,
+                            mDateSetListener,
+                            mYear, mMonth, mDay);
+            
+            case TIME_DIALOG_ID:
+		        return new TimePickerDialog(this,
+		                mTimeSetListener, mHour, mMinute, false);
+		    
+            }
+
+            return null;
+    }
+    protected void onPrepareDialog(int id, Dialog dialog) {
+            switch (id) {
+
+            case DATE_DIALOG_ID:
+                    ((DatePickerDialog) dialog).updateDate(mYear, mMonth, mDay);
+                    break;
+            }
+    }    
+    private void DupdateDisplay() {
+    		dateButton.setText(
+                    new StringBuilder()
+                    // Month is 0 based so add 1
+                    .append(mMonth + 1).append("-")
+                    .append(mDay).append("-")
+                    .append(mYear).append(" "));
+    		
+    }
+    // updates the time we display in the TextView
+    private void TupdateDisplay() {
+        timeButton.setText(
+            new StringBuilder()
+                    .append(pad(mHour)).append(":")
+                    .append(pad(mMinute)));
+    }
+
+    private static String pad(int c) {
+        if (c >= 10)
+            return String.valueOf(c);
+        else
+            return "0" + String.valueOf(c);
+    }
+    private DatePickerDialog.OnDateSetListener mDateSetListener =
+            new DatePickerDialog.OnDateSetListener() {
+
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                            int dayOfMonth) {
+                    mYear = year;
+                    mMonth = monthOfYear;
+                    mDay = dayOfMonth;
+                    DupdateDisplay();
+            }
+    };
+    // the callback received when the user "sets" the time in the dialog
+    private TimePickerDialog.OnTimeSetListener mTimeSetListener =
+        new TimePickerDialog.OnTimeSetListener() {
+    		@Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                mHour = hourOfDay;
+                mMinute = minute;
+                TupdateDisplay();
+            }
+
+			
+        };
     
 }

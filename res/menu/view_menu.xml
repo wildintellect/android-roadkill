@@ -5,5 +5,6 @@
     		android:icon="@android:drawable/ic_menu_preferences" />
     <item android:title="@string/map" 
     		android:id="@+id/item2"
-    		android:icon="@android:drawable/ic_menu_mapmode" />
+    		android:icon="@android:drawable/ic_menu_mapmode"
+    		/>
 </menu>   
