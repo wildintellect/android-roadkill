@@ -3,11 +3,16 @@ package edu.ucdavis.cros.roadkill;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -19,7 +24,8 @@ import android.widget.SimpleCursorAdapter;
 
 public class roadkill extends Activity {
 	//Declare Variables
-	private ImageButton photoButton;
+	public ImageButton photoButton;
+	public static String _path;
 	private Button locationButton;
 	private Button dateButton;
 	private AutoCompleteTextView Species;
@@ -53,6 +59,8 @@ public class roadkill extends Activity {
         splist();
         
         //TODO :Turn on GPS at application start/resume for better/faster fix
+        
+        
         this.saveButton = (Button)findViewById(R.id.saveButton);
         
         //Set up listeners for each button
@@ -62,10 +70,25 @@ public class roadkill extends Activity {
         		//Call the code to take the picture
         		Log.i("RoadKill", "photoButton.onClick()" );
         		
+        		// set path for photo to be saved
+        		_path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "CROSPic.jpg";
+        		
+        		Intent photoIntent = new Intent(roadkill.this,TakePhoto.class);
+        		startActivity(photoIntent);
+        		
+        		// Downsample the image size (inSampleSize > 1) for viewing in App
+            	BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inSampleSize = 8;
+        		
+
+        		Bitmap bitmap = BitmapFactory.decodeFile( _path, options );
+        		photoButton.setImageBitmap(bitmap);
         		//return the photo to the button as a thumbnail
         		//return path to the photo for storage in the db
         		//return the exif data in the photo for date, time and location
         	}
+
+
         });
     	this.locationButton.setOnClickListener(new OnClickListener(){
 //        	@Override
