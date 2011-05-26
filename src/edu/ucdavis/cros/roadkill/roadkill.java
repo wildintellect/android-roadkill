@@ -145,7 +145,15 @@ public class roadkill extends Activity {
         	public void onClick(View v) {
         		//save data to record, if existing record update information
         		Log.i("RoadKill", "saveButton.onClick()" );
-        		
+        		Species.performValidation();
+        		StringBuffer timestamp = new StringBuffer();
+        		timestamp.append(dateButton.getText());
+        		timestamp.append("T");
+        		timestamp.append(timeButton.getText());
+        		String photopath = new String("");
+        		//TODO: get real photo path, lat/lon from GPS, implement saving rating
+        		myDbHelper.save(Species.getText().toString(), 38.5, -121.5, timestamp.toString(), photopath);
+        		Log.i("RoadKill","Saved Record");
         	}
     	});
     
@@ -234,5 +242,5 @@ public class roadkill extends Activity {
 
 			
         };
-    
+    //TODO: Handle Pause, Stop, Resume etc - don't forget to close the database and turn on/off the GPS
 }

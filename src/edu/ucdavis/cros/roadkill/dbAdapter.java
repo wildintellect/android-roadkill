@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -43,11 +44,20 @@ public class dbAdapter {
 	private DatabaseHelper mDbHelper;
     private SQLiteDatabase mDb;
     private static final String DATABASE_NAME = "roadkill.db";
-    //private static final String DATABASE_TABLE = "records";
     private static String DB_PATH = "/data/data/edu.ucdavis.cros.roadkill/databases/";
     private static final int DATABASE_VERSION = 2;
     protected static final String LOOKUP = "common";
 
+    //List of Database fields to be commonly used
+    private static final String DATABASE_TABLE = "records";
+    private static final String Record_User= "username";
+    private static final String Record_Species = "species";
+    private static final String Record_Lat = "lat";
+    private static final String Record_Lon = "lon";
+    private static final String Record_Time = "time";
+    private static final String Record_Upload = "uploaded";
+    private static final String Record_Photo = "photo";
+    
     private final Context myContext;
     //Defines a blank database creation
     //private static final String DATABASE_CREATE =
@@ -128,7 +138,9 @@ public class dbAdapter {
         mDbHelper.close();
     }
     
-    //various database queries as functions
+    /* Various database queries as functions
+     * Includes inserts for new records
+     */
     public ArrayList<String> spplist(){
 		Cursor results = mDb.rawQuery("SELECT _id,common FROM species ORDER BY common", null);
     	//Cursor mCursor = myDataBase.query("allspp",new String[] {"list"}, null, null, null, null, null);
@@ -143,4 +155,19 @@ public class dbAdapter {
 		return list;
 		//return mCursor;
 	}
+    
+    public long save(String species,double lat,double lon,String time,String photopath) {
+    	//Should this be a boolean so it will return true if it works?
+    	ContentValues initialValues = new ContentValues();
+    	initialValues.put( Record_User ,"me");
+    	initialValues.put( Record_Species ,species);
+    	initialValues.put( Record_Lat , lat);
+    	initialValues.put( Record_Lon , lon);
+    	initialValues.put( Record_Time ,time);
+    	initialValues.put( Record_Upload ,"0");
+    	initialValues.put( Record_Photo , photopath);
+
+        
+        return mDb.insert(DATABASE_TABLE, null, initialValues);
+    }
 }
