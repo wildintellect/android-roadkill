@@ -4,6 +4,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -44,6 +45,7 @@ public class dbAdapter {
     //private static final String DATABASE_TABLE = "records";
     private static String DB_PATH = "/data/data/edu.ucdavis.cros.roadkill/databases/";
     private static final int DATABASE_VERSION = 2;
+    protected static final String LOOKUP = "common";
     private final Context myContext;
     //Defines a blank database creation
     //private static final String DATABASE_CREATE =
@@ -116,13 +118,18 @@ public class dbAdapter {
     }
     
     //various database queries as functions
-    public Cursor spplist(){
-		Cursor mCursor = mDb.rawQuery("SELECT _id,common FROM species ORDER BY common", null);
+    public ArrayList<String> spplist(){
+		Cursor results = mDb.rawQuery("SELECT _id,common FROM species ORDER BY common", null);
     	//Cursor mCursor = myDataBase.query("allspp",new String[] {"list"}, null, null, null, null, null);
-		//return mDb.query("allspp",new String[] {"list"}, null, null, null, null, null);
+		//return mDb.query("allspp",new String[] {LOOKUP}, null, null, null, null, null);
 		Log.i(TAG,"Query of species done.");
-		int count = mCursor.getCount();
+		int count = results.getCount();
 		Log.i(TAG,String.valueOf(count));
-		return mCursor;
+		//Convert results to a list array
+		ArrayList<String> list = new ArrayList<String>();
+	    while(results.moveToNext())
+	    	list.add(results.getString(results.getColumnIndex("common")));
+		return list;
+		//return mCursor;
 	}
 }

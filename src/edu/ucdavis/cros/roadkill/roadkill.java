@@ -8,6 +8,7 @@ package edu.ucdavis.cros.roadkill;
 *
 */
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.app.Activity;
@@ -152,15 +153,23 @@ public class roadkill extends Activity {
     
     private void splist() {
     	//Set the species list from a database query
-    	Cursor sppCursor = myDbHelper.spplist();
-        startManagingCursor(sppCursor);
-        String[] from = new String[]{"common"};
-        int[] to = new int[]{R.id.speciesTextView};
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.simple_dropdown_item_1line, sppCursor, from, to);
-        
+    	final ArrayList<String> spplist = myDbHelper.spplist();
+//        startManagingCursor(sppCursor);
+//        String[] from = new String[]{"common"};
+//        int[] to = new int[]{R.id.speciesTextView};
+//        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.simple_dropdown_item_1line, sppCursor, from, to);
+//        SpCurAdapter adapter = new SpCurAdapter(this,sppCursor);
+//        int desiredColumn = 1;
+//        adapter.setCursorToStringConverter(null);
+//        adapter.setStringConversionColumn(desiredColumn);
+
+    	//TODO: fix, Hack to convert arraylist to stringarray?
+    	final String[] mString = (String []) spplist.toArray(new String [spplist.size()]);
     	//Method uses a straight string array
-    	//ArrayAdapter<String> adapter = new ArrayAdapter<String> (this,android.R.layout.simple_dropdown_item_1line, dbAdapter.animalList);
-        
+//    	ArrayAdapter<String> adapter = new ArrayAdapter<String> (this,android.R.layout.simple_dropdown_item_1line, dbAdapter.animalList);
+    	ArrayAdapter<String> adapter = new ArrayAdapter<String> (this,android.R.layout.simple_dropdown_item_1line, mString);
+    	//adapter.setStringConversionColumn(1);
+        //adapter.convertToString(sppCursor);
         this.Species = (AutoCompleteTextView) findViewById(R.id.speciesTextView);
         this.Species.setAdapter(adapter);
     }
