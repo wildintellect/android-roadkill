@@ -1,5 +1,6 @@
 package edu.ucdavis.cros.roadkill;
 //This module handles all the database interaction
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +47,7 @@ public class dbAdapter {
     private static String DB_PATH = "/data/data/edu.ucdavis.cros.roadkill/databases/";
     private static final int DATABASE_VERSION = 2;
     protected static final String LOOKUP = "common";
+
     private final Context myContext;
     //Defines a blank database creation
     //private static final String DATABASE_CREATE =
@@ -108,7 +110,16 @@ public class dbAdapter {
     }
     public dbAdapter open() throws SQLException {
         mDbHelper = new DatabaseHelper(myContext);
-        mDbHelper.createDataBase();
+        //Check if the database file exists, if not copy from asset
+        //if you don't do this you'll overwrite on every run of the app
+        File f = new File(DB_PATH + DATABASE_NAME); 
+        if (f.exists() == false){
+        	Log.i(TAG,"Database does not exist, creating...");
+        	mDbHelper.createDataBase();
+        }
+        else {Log.i(TAG,"Using existing database");
+        };
+        
         mDb = mDbHelper.getWritableDatabase();
         return this;
     }
