@@ -2,6 +2,10 @@ package edu.ucdavis.cros.roadkill;
 
 /* TODO: Add license information, properly cite the Android dev code under Apache 2.0 license
 *
+*Code inspiration
+*http://developer.android.com/resources/tutorials/views/hello-timepicker.html
+*http://developer.android.com/resources/tutorials/views/hello-datepicker.html
+*
 */
 import java.io.IOException;
 import java.util.Calendar;
@@ -45,7 +49,7 @@ public class roadkill extends Activity {
     private int mMinute;
     static final int TIME_DIALOG_ID = 2;
 
-	//testing comment
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -197,29 +201,7 @@ public class roadkill extends Activity {
                     break;
             }
     }    
-    private void DupdateDisplay() {
-    		dateButton.setText(
-                    new StringBuilder()
-                    // Month is 0 based so add 1
-                    .append(mMonth + 1).append("-")
-                    .append(mDay).append("-")
-                    .append(mYear).append(" "));
-    		
-    }
-    // updates the time we display in the TextView
-    private void TupdateDisplay() {
-        timeButton.setText(
-            new StringBuilder()
-                    .append(pad(mHour)).append(":")
-                    .append(pad(mMinute)));
-    }
-
-    private static String pad(int c) {
-        if (c >= 10)
-            return String.valueOf(c);
-        else
-            return "0" + String.valueOf(c);
-    }
+    
     private DatePickerDialog.OnDateSetListener mDateSetListener =
             new DatePickerDialog.OnDateSetListener() {
 
@@ -228,7 +210,7 @@ public class roadkill extends Activity {
                     mYear = year;
                     mMonth = monthOfYear;
                     mDay = dayOfMonth;
-                    DupdateDisplay();
+                    DateTime.DupdateDisplay(mYear,mMonth,mDay,dateButton);
             }
     };
     // the callback received when the user "sets" the time in the dialog
@@ -238,7 +220,7 @@ public class roadkill extends Activity {
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 mHour = hourOfDay;
                 mMinute = minute;
-                TupdateDisplay();
+                DateTime.TupdateDisplay(mHour,mMinute,timeButton);
             }
 
 			
