@@ -10,15 +10,17 @@ package edu.ucdavis.cros.roadkill;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -35,6 +37,7 @@ import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 
 public class roadkill extends Activity {
@@ -58,7 +61,10 @@ public class roadkill extends Activity {
 	private int mHour;
     private int mMinute;
     static final int TIME_DIALOG_ID = 2;
-     
+    private double lat = 38.5;
+    private double lon = -121.5;
+    static final int LOCATION_DIALOG_ID = 3;
+    
 	
     /** Called when the activity is first created. */
     @Override
@@ -124,6 +130,7 @@ public class roadkill extends Activity {
         		//open a selection window, 
         		//ask the user if they want the GPS fix
         		//or adjust manually on a map
+        		showDialog(LOCATION_DIALOG_ID);
         	}
     	});
         this.dateButton.setOnClickListener(new OnClickListener(){
@@ -178,7 +185,7 @@ public class roadkill extends Activity {
         		timestamp.append(timeButton.getText());
         		String photopath = new String("");
         		//TODO: get real photo path, lat/lon from GPS, implement saving rating
-        		myDbHelper.save(Species.getText().toString(), 38.5, -121.5, timestamp.toString(), photopath);
+        		myDbHelper.save(Species.getText().toString(), lat, lon, timestamp.toString(), photopath);
         		Log.i(TAG,"Saved Record");
         	}
     	});
@@ -231,6 +238,15 @@ public class roadkill extends Activity {
             return true;
         case R.id.op_map:
             Log.i(TAG,"Map clicked");
+            //Intent datamap = new Intent(roadkill.this,Maps.class);
+            StringBuffer loc = new StringBuffer();
+            loc.append("geo:");
+            loc.append(lat);
+            loc.append(",");
+            loc.append(lon);
+            loc.append("?z=10");
+            Intent datamap = new Intent(android.content.Intent.ACTION_VIEW,Uri.parse(loc.toString()));
+            startActivity(datamap);
             return true;
         default:
             return super.onOptionsItemSelected(item);
@@ -251,6 +267,27 @@ public class roadkill extends Activity {
 		        return new TimePickerDialog(this,
 		                mTimeSetListener, mHour, mMinute, false);
 		    
+            case LOCATION_DIALOG_ID: {
+            	final CharSequence[] items = {"From Photo Data", "From GPS", "From Map"};
+            	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            	builder.setTitle("Get Location:");
+            	builder.setItems(items, new DialogInterface.OnClickListener() {
+            	    public void onClick(DialogInterface dialog, int item) {
+            	        Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_SHORT).show();
+            	        Log.i(TAG,items[item].toString());
+            	        switch (item) {
+            	        case 0:
+            	        	//From Photo
+            	        case 1:
+            	        	//From GPS
+            	        case 2:
+            	        	//FROM Map
+            	        }
+            	    }
+            	});
+            	AlertDialog gpsalert = builder.create();
+            	return gpsalert;
+            }
             }
 
             return null;
@@ -286,6 +323,11 @@ public class roadkill extends Activity {
             }
 
 			
-        };
+    };
+    
+//    private GPSDialog extends AlertDialog{
+//    	
+//    };
+        
     //TODO: Handle Pause, Stop, Resume etc - don't forget to close the database and turn on/off the GPS
 }
