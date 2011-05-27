@@ -11,4 +11,5 @@
     <string name="save">Save Record</string>
     <string name="date">Date</string>
     <string name="time">Time</string>
+    <string name="upload">Upload</string>
 </resources>

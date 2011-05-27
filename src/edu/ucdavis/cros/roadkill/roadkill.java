@@ -24,6 +24,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -37,6 +38,8 @@ import android.widget.TimePicker;
 
 
 public class roadkill extends Activity {
+	//Debug log tag id
+	private static final String TAG = "RoadKill";
 	//Declare Variables
 	public ImageButton photoButton;
 	public static String _path;
@@ -55,7 +58,7 @@ public class roadkill extends Activity {
 	private int mHour;
     private int mMinute;
     static final int TIME_DIALOG_ID = 2;
-
+     
 	
     /** Called when the activity is first created. */
     @Override
@@ -92,7 +95,7 @@ public class roadkill extends Activity {
 //        	@Override
         	public void onClick(View v) {
         		//Call the code to take the picture
-        		Log.i("RoadKill", "photoButton.onClick()" );
+        		Log.i(TAG, "photoButton.onClick()" );
         		
         		// set path for photo to be saved
         		_path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "CROSPic.jpg";
@@ -117,7 +120,7 @@ public class roadkill extends Activity {
     	this.locationButton.setOnClickListener(new OnClickListener(){
 //        	@Override
         	public void onClick(View v) {
-        		Log.i("RoadKill", "locationButton.onClick()" );
+        		Log.i(TAG, "locationButton.onClick()" );
         		//open a selection window, 
         		//ask the user if they want the GPS fix
         		//or adjust manually on a map
@@ -127,7 +130,7 @@ public class roadkill extends Activity {
 //        	@Override
         	public void onClick(View v) {
         		//open a popup with a date/time selector widget
-        		Log.i("RoadKill", "dateButton.onClick()" );
+        		Log.i(TAG, "dateButton.onClick()" );
         		showDialog(DATE_DIALOG_ID);
         	}
     	});
@@ -142,7 +145,7 @@ public class roadkill extends Activity {
 //        	@Override
         	public void onClick(View v) {
         		//open a popup with a date/time selector widget
-        		Log.i("RoadKill", "dateButton.onClick()" );
+        		Log.i(TAG, "dateButton.onClick()" );
         		showDialog(TIME_DIALOG_ID);
         	}
     	});
@@ -154,7 +157,7 @@ public class roadkill extends Activity {
         this.Species.setOnClickListener(new OnClickListener(){
 //        	@Override
         	public void onClick(View v) {
-        		Log.i("RoadKill", "Species.onClick()" );
+        		Log.i(TAG, "Species.onClick()" );
         		//clear the Species label once the start typing
         		//auto match based on the pre-seeded data
         		//if (Species.getText() == "Species"){
@@ -167,7 +170,7 @@ public class roadkill extends Activity {
 //        	@Override
         	public void onClick(View v) {
         		//save data to record, if existing record update information
-        		Log.i("RoadKill", "saveButton.onClick()" );
+        		Log.i(TAG, "saveButton.onClick()" );
         		Species.performValidation();
         		StringBuffer timestamp = new StringBuffer();
         		timestamp.append(dateButton.getText());
@@ -176,7 +179,7 @@ public class roadkill extends Activity {
         		String photopath = new String("");
         		//TODO: get real photo path, lat/lon from GPS, implement saving rating
         		myDbHelper.save(Species.getText().toString(), 38.5, -121.5, timestamp.toString(), photopath);
-        		Log.i("RoadKill","Saved Record");
+        		Log.i(TAG,"Saved Record");
         	}
     	});
     
@@ -215,6 +218,25 @@ public class roadkill extends Activity {
         inflater.inflate(R.menu.view_menu, menu);
         return true;
     }   
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+    	//handles the pop up menu
+    	switch (item.getItemId()) {
+        case R.id.op_settings:
+            Log.i(TAG,"Settings clicked");
+            return true;
+        case R.id.op_upload:
+            Log.i(TAG,"Upload clicked");
+            return true;
+        case R.id.op_map:
+            Log.i(TAG,"Map clicked");
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+
+    }
     
     @Override
     protected Dialog onCreateDialog(int id) {
