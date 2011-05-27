@@ -2,13 +2,20 @@ package edu.ucdavis.cros.roadkill;
 
 import java.io.IOException;
 
+
+
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,11 +37,15 @@ public class roadkill extends Activity {
 	private Button dateButton;
 	private AutoCompleteTextView Species;
 	private Button saveButton;
+	public static final int PHOTO_BMP = 1;
 	//Declare Database
 	//private dbAdapter mDbHelper;
 	private DataBaseHelper myDbHelper;
 
-	//testing comment
+    LocationManager lm = null;
+    LocationListener ll = null;
+
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,8 +69,12 @@ public class roadkill extends Activity {
         this.dateButton = (Button)findViewById(R.id.dateButton);
         splist();
         
-        //TODO :Turn on GPS at application start/resume for better/faster fix
-        
+        //Turn on GPS at application start/resume for better/faster fix
+        lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        	Intent gpsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        	startActivity(gpsIntent);
+        }
         
         this.saveButton = (Button)findViewById(R.id.saveButton);
         
@@ -70,22 +85,31 @@ public class roadkill extends Activity {
         		//Call the code to take the picture
         		Log.i("RoadKill", "photoButton.onClick()" );
         		
-        		// set path for photo to be saved
+        		// set path for photo to be saved in db
         		_path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "CROSPic.jpg";
         		
+        		//Start TakePhoto Activity
         		Intent photoIntent = new Intent(roadkill.this,TakePhoto.class);
-        		startActivity(photoIntent);
+        		startActivityForResult(photoIntent,PHOTO_BMP);
         		
-        		// Downsample the image size (inSampleSize > 1) for viewing in App
-            	BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inSampleSize = 8;
-        		
+        	}
+        	   @Override
+        	    public void onActivityResult(int requestCode, int resultCode, Bundle data) {
+        		   super.onActivityResult(requestCode, resultCode, data);
+        		   //return the photo to the button as a thumbnail
+        		   switch(requestCode) {
+        		   case PHOTO_BMP:
+        			   if (resultCode == RESULT_OK) {
+        				   Bundle bundle = data.getBundleExtra("BitMap");
+        				   
+        			   }
+        			   
 
-        		Bitmap bitmap = BitmapFactory.decodeFile( _path, options );
-        		photoButton.setImageBitmap(bitmap);
-        		//return the photo to the button as a thumbnail
-        		//return path to the photo for storage in the db
-        		//return the exif data in the photo for date, time and location
+
+//        			   //return the exif data in the photo for date, time and location
+//        			   locationButton.setText(TakePhoto.strLatC);
+        		   }
+
         	}
 
 
@@ -155,5 +179,10 @@ public class roadkill extends Activity {
         return true;
     }   
         
-    
+//	@Override
+//	public void onStop() {
+//		lm.removeUpdates(ll);
+//		lm = null;
+//		super.onDestroy();
+//	}
 }

@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.os.Bundle;
@@ -21,13 +22,13 @@ public class TakePhoto extends Activity {
 //	protected String _path;
 	protected boolean _taken;
 	protected ImageView _image;
-	protected TextView _field;
-	public Bitmap bitmap;
+	public static Bitmap bitmap;
+	public ImageButton phButton;
 	ExifInterface exif;
     File picFile;
     String strLat;
     Float fltLatC;
-    String strLatC;
+    static String strLatC;
     String strLatRef;
     String strLong;
     Float fltLongC;
@@ -59,6 +60,7 @@ public class TakePhoto extends Activity {
     	
     	// Tells camera to return to App with a result when done
     	startActivityForResult( intent, 0 );
+    	
     }
 
     @Override
@@ -74,17 +76,30 @@ public class TakePhoto extends Activity {
     			
     		case -1:
     			onPhotoTaken();
-    			break;
+    			Intent returnIntent = new Intent();
+    			returnIntent.putExtra("BitMap", bitmap);
+    			setResult(RESULT_OK,returnIntent);
+    			finish();
+    			
     	}
     }
     
-	protected void onPhotoTaken()
+	public Bitmap onPhotoTaken()
     {
     	Log.i( "RoadKillPhoto", "onPhotoTaken" );
     	
     	_taken = true;
     	
-
+    	
+    	// Downsample the image size (inSampleSize > 1) for viewing in App
+    	BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 4;
+    	
+    	Bitmap bitmap = BitmapFactory.decodeFile( roadkill._path, options );
+    	
+//    	ImageButton phButton = (ImageButton) ((roadkill)getBaseContext()).findViewById(R.id.photoButton);
+//    	phButton.setImageBitmap(bitmap);
+		
     	try {
     		File picFile = new File( roadkill._path );
     		exif = new ExifInterface(picFile.getCanonicalPath());
@@ -116,22 +131,20 @@ public class TakePhoto extends Activity {
     	
 		
 		
-    	latT = (TextView)findViewById(R.id.latVal);
-    	longT = (TextView)findViewById(R.id.longVal);
-    	datetimeT = (TextView)findViewById(R.id.dateVal);
-    	
-    	fltLatC = fltLatC*1000000;
-    	fltLongC = fltLongC*1000000;
+//    	latT = (TextView)findViewById(R.id.latVal);
+//    	longT = (TextView)findViewById(R.id.longVal);
+//    	datetimeT = (TextView)findViewById(R.id.dateVal);
+
+		
     	
     	strLatC = fltLatC.toString();
     	strLongC = fltLongC.toString();
     	
-    	latT.setText(strLatC);
-    	longT.setText(strLongC);
-    	datetimeT.setText(strDateTime);
+//    	latT.setText(strLatC);
+//    	longT.setText(strLongC);
+//    	datetimeT.setText(strDateTime);
     	
-    	_field.setVisibility( View.GONE );
-
+    	return bitmap;
     	
     }
     public Float convertToDegree(String stringDMS){
