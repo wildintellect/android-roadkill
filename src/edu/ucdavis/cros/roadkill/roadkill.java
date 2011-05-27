@@ -239,6 +239,7 @@ public class roadkill extends Activity {
         case R.id.op_map:
             Log.i(TAG,"Map clicked");
             //Intent datamap = new Intent(roadkill.this,Maps.class);
+            //TODO: replace Intent with Map Activity that shows the data
             StringBuffer loc = new StringBuffer();
             loc.append("geo:");
             loc.append(lat);
@@ -326,7 +327,7 @@ public class roadkill extends Activity {
     };
     
 //    private GPSDialog extends AlertDialog{
-//    	
+//    TODO: Implement AlertDialog as it's own function/class, work ok as is for now.	
 //    };
         
     //TODO: Handle Pause, Stop, Resume etc - don't forget to close the database and turn on/off the GPS
