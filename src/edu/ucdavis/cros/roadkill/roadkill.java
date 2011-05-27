@@ -281,6 +281,11 @@ public class roadkill extends Activity {
             	        	//From Photo
             	        case 1:
             	        	//From GPS
+            	        	StringBuffer loc = new StringBuffer();
+            	            loc.append(lat);
+            	            loc.append(",");
+            	            loc.append(lon);
+            	        	locationButton.setText(loc.toString());
             	        case 2:
             	        	//FROM Map
             	        }
