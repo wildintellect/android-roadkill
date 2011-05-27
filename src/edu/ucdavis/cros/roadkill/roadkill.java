@@ -1,6 +1,8 @@
 package edu.ucdavis.cros.roadkill;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 
@@ -33,6 +35,10 @@ public class roadkill extends Activity {
 	//Declare Variables
 	public ImageButton photoButton;
 	public static String _path;
+//	private String strLatLong;
+//	private Date d;
+//	private SimpleDateFormat dateParser;
+//	private SimpleDateFormat dateConverter;
 	private Button locationButton;
 	private Button dateButton;
 	private AutoCompleteTextView Species;
@@ -93,26 +99,6 @@ public class roadkill extends Activity {
         		startActivityForResult(photoIntent,PHOTO_BMP);
         		
         	}
-        	   @Override
-        	    public void onActivityResult(int requestCode, int resultCode, Bundle data) {
-        		   super.onActivityResult(requestCode, resultCode, data);
-        		   //return the photo to the button as a thumbnail
-        		   switch(requestCode) {
-        		   case PHOTO_BMP:
-        			   if (resultCode == RESULT_OK) {
-        				   Bundle bundle = data.getBundleExtra("BitMap");
-        				   
-        			   }
-        			   
-
-
-//        			   //return the exif data in the photo for date, time and location
-//        			   locationButton.setText(TakePhoto.strLatC);
-        		   }
-
-        	}
-
-
         });
     	this.locationButton.setOnClickListener(new OnClickListener(){
 //        	@Override
@@ -179,10 +165,42 @@ public class roadkill extends Activity {
         return true;
     }   
         
-//	@Override
-//	public void onStop() {
-//		lm.removeUpdates(ll);
-//		lm = null;
-//		super.onDestroy();
-//	}
-}
+
+
+	   @Override
+	   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//		   super.onActivityResult(requestCode, resultCode, extras);
+		   //return the photo to the button as a thumbnail
+
+		   if (requestCode == PHOTO_BMP) {
+		   if (resultCode == RESULT_OK) {
+			   
+			   // Downsample the image size (inSampleSize > 1) for viewing in App
+			   BitmapFactory.Options options = new BitmapFactory.Options();
+			   options.inSampleSize = 8;
+
+			   // Put bitmap image onto photoButton
+			   Bitmap bitmap = BitmapFactory.decodeFile( _path, options );
+			   photoButton.setImageBitmap(bitmap);
+			   
+			   //return the exif data in the photo for date, time and location
+			   String strLatLong = new String (TakePhoto.strLatC + "\n" + TakePhoto.strLongC);
+			   locationButton.setText(strLatLong);
+//			   
+//			   SimpleDateFormat dateParser = new SimpleDateFormat("yyy:MM:dd HH:mm:ss");
+//			   SimpleDateFormat dateConverter = new SimpleDateFormat ("yyy-MM-dd'T'HH:mm:ss");
+//			   Date d = dateParser.parse(TakePhoto.strDateTime);
+//			   String DateString = dateConverter.format(d);
+
+		   }
+		   
+
+
+			   
+			   
+		   }
+
+	
+
+	   }
+};

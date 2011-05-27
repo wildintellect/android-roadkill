@@ -19,10 +19,8 @@ import android.os.Environment;
 
 public class TakePhoto extends Activity {
 
-//	protected String _path;
 	protected boolean _taken;
 	protected ImageView _image;
-	public static Bitmap bitmap;
 	public ImageButton phButton;
 	ExifInterface exif;
     File picFile;
@@ -32,9 +30,9 @@ public class TakePhoto extends Activity {
     String strLatRef;
     String strLong;
     Float fltLongC;
-    String strLongC;
+    static String strLongC;
     String strLongRef;
-    String strDateTime;
+    static String strDateTime;
     TextView longT;
     TextView latT;
     TextView datetimeT;
@@ -77,29 +75,19 @@ public class TakePhoto extends Activity {
     		case -1:
     			onPhotoTaken();
     			Intent returnIntent = new Intent();
-    			returnIntent.putExtra("BitMap", bitmap);
     			setResult(RESULT_OK,returnIntent);
     			finish();
     			
     	}
     }
     
-	public Bitmap onPhotoTaken()
+	public boolean onPhotoTaken()
     {
     	Log.i( "RoadKillPhoto", "onPhotoTaken" );
     	
     	_taken = true;
     	
     	
-    	// Downsample the image size (inSampleSize > 1) for viewing in App
-    	BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 4;
-    	
-    	Bitmap bitmap = BitmapFactory.decodeFile( roadkill._path, options );
-    	
-//    	ImageButton phButton = (ImageButton) ((roadkill)getBaseContext()).findViewById(R.id.photoButton);
-//    	phButton.setImageBitmap(bitmap);
-		
     	try {
     		File picFile = new File( roadkill._path );
     		exif = new ExifInterface(picFile.getCanonicalPath());
@@ -144,8 +132,7 @@ public class TakePhoto extends Activity {
 //    	longT.setText(strLongC);
 //    	datetimeT.setText(strDateTime);
     	
-    	return bitmap;
-    	
+    	return _taken;
     }
     public Float convertToDegree(String stringDMS){
    	 Float result = null;
