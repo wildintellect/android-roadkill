@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.os.Bundle;
@@ -18,22 +19,20 @@ import android.os.Environment;
 
 public class TakePhoto extends Activity {
 
-//	protected String _path;
 	protected boolean _taken;
 	protected ImageView _image;
-	protected TextView _field;
-	public Bitmap bitmap;
+	public ImageButton phButton;
 	ExifInterface exif;
     File picFile;
     String strLat;
     Float fltLatC;
-    String strLatC;
+    static String strLatC;
     String strLatRef;
     String strLong;
     Float fltLongC;
-    String strLongC;
+    static String strLongC;
     String strLongRef;
-    String strDateTime;
+    static String strDateTime;
     TextView longT;
     TextView latT;
     TextView datetimeT;
@@ -59,6 +58,7 @@ public class TakePhoto extends Activity {
     	
     	// Tells camera to return to App with a result when done
     	startActivityForResult( intent, 0 );
+    	
     }
 
     @Override
@@ -74,17 +74,20 @@ public class TakePhoto extends Activity {
     			
     		case -1:
     			onPhotoTaken();
-    			break;
+    			Intent returnIntent = new Intent();
+    			setResult(RESULT_OK,returnIntent);
+    			finish();
+    			
     	}
     }
     
-	protected void onPhotoTaken()
+	public boolean onPhotoTaken()
     {
     	Log.i( "RoadKillPhoto", "onPhotoTaken" );
     	
     	_taken = true;
     	
-
+    	
     	try {
     		File picFile = new File( roadkill._path );
     		exif = new ExifInterface(picFile.getCanonicalPath());
@@ -116,23 +119,20 @@ public class TakePhoto extends Activity {
     	
 		
 		
-    	latT = (TextView)findViewById(R.id.latVal);
-    	longT = (TextView)findViewById(R.id.longVal);
-    	datetimeT = (TextView)findViewById(R.id.dateVal);
-    	
-    	fltLatC = fltLatC*1000000;
-    	fltLongC = fltLongC*1000000;
+//    	latT = (TextView)findViewById(R.id.latVal);
+//    	longT = (TextView)findViewById(R.id.longVal);
+//    	datetimeT = (TextView)findViewById(R.id.dateVal);
+
+		
     	
     	strLatC = fltLatC.toString();
     	strLongC = fltLongC.toString();
     	
-    	latT.setText(strLatC);
-    	longT.setText(strLongC);
-    	datetimeT.setText(strDateTime);
+//    	latT.setText(strLatC);
+//    	longT.setText(strLongC);
+//    	datetimeT.setText(strDateTime);
     	
-    	_field.setVisibility( View.GONE );
-
-    	
+    	return _taken;
     }
     public Float convertToDegree(String stringDMS){
    	 Float result = null;

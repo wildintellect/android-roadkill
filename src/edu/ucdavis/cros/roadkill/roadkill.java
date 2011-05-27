@@ -16,13 +16,22 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -46,12 +55,18 @@ public class roadkill extends Activity {
 	//Declare Variables
 	public ImageButton photoButton;
 	public static String _path;
+//	private String strLatLong;
+//	private Date d;
+//	private SimpleDateFormat dateParser;
+//	private SimpleDateFormat dateConverter;
 	private Button locationButton;
 	private Button dateButton;
 	private Button timeButton;
 	private AutoCompleteTextView Species;
 	private Button saveButton;
+	public static final int PHOTO_BMP = 1;
 	//Declare Database
+<<<<<<< HEAD
 	private dbAdapter myDbHelper;
 	//private DataBaseHelper myDbHelper;
 	private int mYear;
@@ -64,8 +79,10 @@ public class roadkill extends Activity {
     private double lat = 38.5;
     private double lon = -121.5;
     static final int LOCATION_DIALOG_ID = 3;
-    
-	
+
+    LocationManager lm = null;
+    LocationListener ll = null;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,8 +107,12 @@ public class roadkill extends Activity {
         this.timeButton = (Button)findViewById(R.id.timeButton);
         splist();
         
-        //TODO :Turn on GPS at application start/resume for better/faster fix
-        
+        //Turn on GPS at application start/resume for better/faster fix
+        lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        	Intent gpsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        	startActivity(gpsIntent);
+        }
         
         this.saveButton = (Button)findViewById(R.id.saveButton);
         
@@ -103,25 +124,14 @@ public class roadkill extends Activity {
         		//Call the code to take the picture
         		Log.i(TAG, "photoButton.onClick()" );
         		
-        		// set path for photo to be saved
+        		// set path for photo to be saved in db
         		_path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "CROSPic.jpg";
         		
+        		//Start TakePhoto Activity
         		Intent photoIntent = new Intent(roadkill.this,TakePhoto.class);
-        		startActivity(photoIntent);
+        		startActivityForResult(photoIntent,PHOTO_BMP);
         		
-        		// Downsample the image size (inSampleSize > 1) for viewing in App
-            	BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inSampleSize = 8;
-        		
-
-        		Bitmap bitmap = BitmapFactory.decodeFile( _path, options );
-        		photoButton.setImageBitmap(bitmap);
-        		//return the photo to the button as a thumbnail
-        		//return path to the photo for storage in the db
-        		//return the exif data in the photo for date, time and location
         	}
-
-
         });
     	this.locationButton.setOnClickListener(new OnClickListener(){
 //        	@Override
@@ -225,6 +235,7 @@ public class roadkill extends Activity {
         inflater.inflate(R.menu.view_menu, menu);
         return true;
     }   
+
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
@@ -337,3 +348,42 @@ public class roadkill extends Activity {
         
     //TODO: Handle Pause, Stop, Resume etc - don't forget to close the database and turn on/off the GPS
 }
+        
+
+	   @Override
+	   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//		   super.onActivityResult(requestCode, resultCode, extras);
+		   //return the photo to the button as a thumbnail
+
+		   if (requestCode == PHOTO_BMP) {
+		   if (resultCode == RESULT_OK) {
+			   
+			   // Downsample the image size (inSampleSize > 1) for viewing in App
+			   BitmapFactory.Options options = new BitmapFactory.Options();
+			   options.inSampleSize = 8;
+
+			   // Put bitmap image onto photoButton
+			   Bitmap bitmap = BitmapFactory.decodeFile( _path, options );
+			   photoButton.setImageBitmap(bitmap);
+			   
+			   //return the exif data in the photo for date, time and location
+			   String strLatLong = new String (TakePhoto.strLatC + "\n" + TakePhoto.strLongC);
+			   locationButton.setText(strLatLong);
+//			   
+//			   SimpleDateFormat dateParser = new SimpleDateFormat("yyy:MM:dd HH:mm:ss");
+//			   SimpleDateFormat dateConverter = new SimpleDateFormat ("yyy-MM-dd'T'HH:mm:ss");
+//			   Date d = dateParser.parse(TakePhoto.strDateTime);
+//			   String DateString = dateConverter.format(d);
+
+		   }
+		   
+
+
+			   
+			   
+		   }
+
+	
+
+	   }
+};
