@@ -306,6 +306,8 @@ public class roadkill extends Activity {
                     		break;
             	        case 2:
             	        	//FROM Map
+            	        	//Intent locateIntent = new Intent(roadkill.this,FindLoc.class);
+            	        	//startActivityForResult(locateIntent,PHOTO_BMP);
             	        	LocationSet();
             	        	break;
             	        }
