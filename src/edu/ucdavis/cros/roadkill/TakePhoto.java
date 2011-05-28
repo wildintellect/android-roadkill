@@ -48,7 +48,7 @@ public class TakePhoto extends Activity {
     	
     	
 //    	_path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "CROSPic.jpg";
-    	Log.i("MakeMachine", "startCameraActivity()" );
+    	Log.i("TakePhoto", "startCameraActivity()" );
     	File file = new File( roadkill._path );
     	Uri outputFileUri = Uri.fromFile( file );
     	
@@ -65,11 +65,11 @@ public class TakePhoto extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) 
     {	
     	// Log whether they took a photo or not
-    	Log.i( "MakeMachine", "resultCode: " + resultCode );
+    	Log.i( "TakePhoto", "resultCode: " + resultCode );
     	switch( resultCode )
     	{
     		case 0:
-    			Log.i( "MakeMachine", "User cancelled" );
+    			Log.i( "TakePhoto", "User cancelled" );
     			break;
     			
     		case -1:
@@ -102,35 +102,35 @@ public class TakePhoto extends Activity {
     	strLongRef = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
     	strDateTime = exif.getAttribute(ExifInterface.TAG_DATETIME);
     	
- 
-		if(strLatRef.equals("N")){
-			fltLatC = convertToDegree(strLat);
-		}
-		else{
-			fltLatC = 0 - convertToDegree(strLat);
-		}
-		 
-		if(strLongRef.equals("E")){
-			fltLongC = convertToDegree(strLong);
-		}
-		else{
-			fltLongC = 0 - convertToDegree(strLong);
-		}
-    	
-		
-		
-//    	latT = (TextView)findViewById(R.id.latVal);
-//    	longT = (TextView)findViewById(R.id.longVal);
-//    	datetimeT = (TextView)findViewById(R.id.dateVal);
+    	//TODO : Comparison appears to fail if the GPS doesn't have a fix
+		//Set the Location from the Photo exif it it has a GPS fix
+    	if(strLatRef != null){
+			if(strLatRef.equals("N")){
+				fltLatC = convertToDegree(strLat);
+			}
+			else{
+				fltLatC = 0 - convertToDegree(strLat);
+			}
+			 
+			if(strLongRef.equals("E")){
+				fltLongC = convertToDegree(strLong);
+			}
+			else{
+				fltLongC = 0 - convertToDegree(strLong);
+			}
 
-		
+			latT = (TextView)findViewById(R.id.latVal);
+	    	longT = (TextView)findViewById(R.id.longVal);
+	    	strLatC = fltLatC.toString();
+	    	strLongC = fltLongC.toString();
+	    	
+	    	latT.setText(strLatC);
+	    	longT.setText(strLongC);
+		}
     	
-    	strLatC = fltLatC.toString();
-    	strLongC = fltLongC.toString();
-    	
-//    	latT.setText(strLatC);
-//    	longT.setText(strLongC);
-//    	datetimeT.setText(strDateTime);
+		//Set the time from the Photo
+    	datetimeT = (TextView)findViewById(R.id.dateVal);
+    	datetimeT.setText(strDateTime);
     	
     	return _taken;
     }

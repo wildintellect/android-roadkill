@@ -16,6 +16,8 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import android.app.Activity;
@@ -66,7 +68,6 @@ public class roadkill extends Activity {
 	private Button saveButton;
 	public static final int PHOTO_BMP = 1;
 	//Declare Database
-<<<<<<< HEAD
 	private dbAdapter myDbHelper;
 	//private DataBaseHelper myDbHelper;
 	private int mYear;
@@ -79,7 +80,7 @@ public class roadkill extends Activity {
     private double lat = 38.5;
     private double lon = -121.5;
     static final int LOCATION_DIALOG_ID = 3;
-
+    private StringBuffer timestamp;
     LocationManager lm = null;
     LocationListener ll = null;
 
@@ -106,6 +107,7 @@ public class roadkill extends Activity {
         this.dateButton = (Button)findViewById(R.id.dateButton);
         this.timeButton = (Button)findViewById(R.id.timeButton);
         splist();
+        timestamp = new StringBuffer();
         
         //Turn on GPS at application start/resume for better/faster fix
         lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
@@ -189,10 +191,11 @@ public class roadkill extends Activity {
         		//save data to record, if existing record update information
         		Log.i(TAG, "saveButton.onClick()" );
         		Species.performValidation();
-        		StringBuffer timestamp = new StringBuffer();
-        		timestamp.append(dateButton.getText());
-        		timestamp.append("T");
-        		timestamp.append(timeButton.getText());
+        		if (timestamp.length() < 1) {
+	        		timestamp.append(dateButton.getText());
+	        		timestamp.append("T");
+	        		timestamp.append(timeButton.getText());
+        		}
         		String photopath = new String("");
         		//TODO: get real photo path, lat/lon from GPS, implement saving rating
         		myDbHelper.save(Species.getText().toString(), lat, lon, timestamp.toString(), photopath);
@@ -347,7 +350,6 @@ public class roadkill extends Activity {
 //    };
         
     //TODO: Handle Pause, Stop, Resume etc - don't forget to close the database and turn on/off the GPS
-}
         
 
 	   @Override
@@ -356,34 +358,38 @@ public class roadkill extends Activity {
 		   //return the photo to the button as a thumbnail
 
 		   if (requestCode == PHOTO_BMP) {
-		   if (resultCode == RESULT_OK) {
+			   if (resultCode == RESULT_OK) {
+				   
+				   // Downsample the image size (inSampleSize > 1) for viewing in App
+				   BitmapFactory.Options options = new BitmapFactory.Options();
+				   //TODO: return image that fits the button
+				   options.inSampleSize = 16;
+				   //options.outWidth = 100;
+				   // Put bitmap image onto photoButton
+				   Bitmap bitmap = BitmapFactory.decodeFile( _path, options );
+				   photoButton.setImageBitmap(bitmap);
+				   
+				   //return the exif data in the photo for date, time and location
+				   if (TakePhoto.strLatC != null) {
+					   String strLatLong = new String (TakePhoto.strLatC + "\n" + TakePhoto.strLongC);
+					   locationButton.setText(strLatLong);
+				   };
 			   
-			   // Downsample the image size (inSampleSize > 1) for viewing in App
-			   BitmapFactory.Options options = new BitmapFactory.Options();
-			   options.inSampleSize = 8;
-
-			   // Put bitmap image onto photoButton
-			   Bitmap bitmap = BitmapFactory.decodeFile( _path, options );
-			   photoButton.setImageBitmap(bitmap);
-			   
-			   //return the exif data in the photo for date, time and location
-			   String strLatLong = new String (TakePhoto.strLatC + "\n" + TakePhoto.strLongC);
-			   locationButton.setText(strLatLong);
-//			   
-//			   SimpleDateFormat dateParser = new SimpleDateFormat("yyy:MM:dd HH:mm:ss");
-//			   SimpleDateFormat dateConverter = new SimpleDateFormat ("yyy-MM-dd'T'HH:mm:ss");
-//			   Date d = dateParser.parse(TakePhoto.strDateTime);
-//			   String DateString = dateConverter.format(d);
-
+				   if (TakePhoto.strDateTime != null) {
+					   SimpleDateFormat dateParser = new SimpleDateFormat("yyy:MM:dd HH:mm:ss");
+					   SimpleDateFormat dateConverter = new SimpleDateFormat ("yyy-MM-dd'T'HH:mm:ss");
+					   Date d = null;
+							try {
+								d = dateParser.parse(TakePhoto.strDateTime);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+					   timestamp.append(dateConverter.format(d));
+				   }
+			   }			   
 		   }
-		   
-
-
-			   
-			   
-		   }
-
-	
 
 	   }
+	   
 };

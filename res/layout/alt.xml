@@ -11,19 +11,18 @@
     					  android:layout_height="wrap_content" 
     					  android:layout_width="match_parent" 
     					  android:id="@+id/speciesTextView" android:layout_weight="1"></AutoCompleteTextView>
-    <LinearLayout android:layout_width="match_parent" 
-    			  android:id="@+id/linearLayout1" 
-    			  android:layout_height="wrap_content" android:layout_weight="1">
-        <ImageButton android:layout_width="wrap_content" 
-        			 android:src="@android:drawable/ic_menu_camera" 
-        			 android:layout_height="wrap_content" android:id="@+id/photoButton"></ImageButton>
-        <Button android:text="@string/location" 
-        		android:layout_height="wrap_content" 
-        		android:layout_width="match_parent" android:id="@+id/locationButton"></Button>
+    <LinearLayout android:id="@+id/linearLayout1" 
+    			  android:layout_height="wrap_content" android:layout_weight="1" android:orientation="horizontal" android:layout_gravity="fill_horizontal" android:layout_width="match_parent">
+        <ImageButton android:src="@android:drawable/ic_menu_camera" 
+        			 android:id="@+id/photoButton" android:layout_gravity="fill_horizontal" android:layout_height="match_parent" android:layout_width="wrap_content" android:layout_weight=".5"></ImageButton>
+        <LinearLayout android:id="@+id/linearLayout3" 
+    			  android:layout_height="wrap_content" android:layout_weight=".5" android:layout_gravity="right" android:orientation="vertical" android:layout_width="wrap_content">
+	        <Button android:id="@+id/dateButton" android:text="@string/date" android:layout_height="wrap_content" android:layout_weight="1" android:layout_width="match_parent"></Button>
+	        <Button android:id="@+id/timeButton" android:text="@string/time" android:layout_height="wrap_content" android:layout_weight="1" android:layout_gravity="center_horizontal" android:layout_width="match_parent"></Button>
+    	</LinearLayout>
     </LinearLayout>
     <LinearLayout android:layout_width="match_parent" android:id="@+id/linearLayout2" android:layout_height="wrap_content" android:layout_weight="1">
-        <Button android:layout_height="wrap_content" android:id="@+id/dateButton" android:text="@string/date" android:layout_width="wrap_content" android:layout_weight="1"></Button>
-        <Button android:layout_height="wrap_content" android:id="@+id/timeButton" android:text="@string/time" android:layout_width="wrap_content" android:layout_gravity="center_horizontal" android:layout_weight="1"></Button>
+        <Button android:id="@+id/locationButton" android:layout_width="match_parent" android:text="@string/location" android:layout_height="wrap_content"></Button>
     </LinearLayout>
     <RatingBar android:id="@+id/ratingBar1"
     		   android:numStars="3"
