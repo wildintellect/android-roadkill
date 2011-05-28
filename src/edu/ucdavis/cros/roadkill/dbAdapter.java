@@ -156,7 +156,7 @@ public class dbAdapter {
 		//return mCursor;
 	}
     
-    public long save(String species,double lat,double lon,String time,String photopath) {
+    public long save(String species,String lat,String lon,String time,String photopath) {
     	//Should this be a boolean so it will return true if it works?
     	ContentValues initialValues = new ContentValues();
     	initialValues.put( Record_User ,"me");

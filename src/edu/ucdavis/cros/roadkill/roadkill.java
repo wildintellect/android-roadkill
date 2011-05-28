@@ -77,8 +77,8 @@ public class roadkill extends Activity {
 	private int mHour;
     private int mMinute;
     static final int TIME_DIALOG_ID = 2;
-    private double lat = 38.5;
-    private double lon = -121.5;
+    private String lat = "38.5";
+    private String lon = "-121.5";
     static final int LOCATION_DIALOG_ID = 3;
     private StringBuffer timestamp;
     LocationManager lm = null;
@@ -293,15 +293,21 @@ public class roadkill extends Activity {
             	        switch (item) {
             	        case 0:
             	        	//From Photo
+            	        	lat = "0";
+            	        	lon = "0";
+            	        	LocationSet();
+            	        	break;
             	        case 1:
             	        	//From GPS
-            	        	StringBuffer loc = new StringBuffer();
-            	            loc.append(lat);
-            	            loc.append(",");
-            	            loc.append(lon);
-            	        	locationButton.setText(loc.toString());
+            	        	Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER); //
+                    		lat = String.format("%f",location.getLatitude());
+                    		lon = String.format("%f", location.getLongitude());
+                    		LocationSet();
+                    		break;
             	        case 2:
             	        	//FROM Map
+            	        	LocationSet();
+            	        	break;
             	        }
             	    }
             	});
@@ -311,6 +317,13 @@ public class roadkill extends Activity {
             }
 
             return null;
+    }
+    private void LocationSet(){
+    	StringBuffer loc = new StringBuffer();
+        loc.append(lat);
+        loc.append(",");
+        loc.append(lon);
+    	locationButton.setText(loc.toString());
     }
     protected void onPrepareDialog(int id, Dialog dialog) {
             switch (id) {
@@ -371,7 +384,7 @@ public class roadkill extends Activity {
 				   
 				   //return the exif data in the photo for date, time and location
 				   if (TakePhoto.strLatC != null) {
-					   String strLatLong = new String (TakePhoto.strLatC + "\n" + TakePhoto.strLongC);
+					   String strLatLong = new String (TakePhoto.strLatC + "," + TakePhoto.strLongC);
 					   locationButton.setText(strLatLong);
 				   };
 			   
