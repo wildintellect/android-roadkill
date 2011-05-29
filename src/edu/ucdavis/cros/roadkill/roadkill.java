@@ -260,8 +260,8 @@ public class roadkill extends Activity {
             loc.append(",");
             loc.append(lon);
             loc.append("?z=10");
-            Intent datamap = new Intent(android.content.Intent.ACTION_VIEW,Uri.parse(loc.toString()));
-            startActivity(datamap);
+            //Intent datamap = new Intent(android.content.Intent.ACTION_VIEW,Uri.parse(loc.toString()));
+            //startActivity(datamap);
             return true;
         default:
             return super.onOptionsItemSelected(item);

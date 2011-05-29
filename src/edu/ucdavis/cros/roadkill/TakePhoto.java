@@ -129,8 +129,8 @@ public class TakePhoto extends Activity {
 		}
     	
 		//Set the time from the Photo
-    	datetimeT = (TextView)findViewById(R.id.dateVal);
-    	datetimeT.setText(strDateTime);
+    	//datetimeT = (TextView)findViewById(R.id.dateVal);
+    	//datetimeT.setText(strDateTime);
     	
     	return _taken;
     }
