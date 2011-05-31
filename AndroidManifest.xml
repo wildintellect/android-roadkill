@@ -19,6 +19,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".TakePhoto"> </activity>
+        <activity android:name=".DataMap"></activity>
 
     </application>
 </manifest>
