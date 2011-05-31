@@ -254,12 +254,17 @@ public class roadkill extends Activity {
             Log.i(TAG,"Map clicked");
             //Intent datamap = new Intent(roadkill.this,Maps.class);
             //TODO: replace Intent with Map Activity that shows the data
-            StringBuffer loc = new StringBuffer();
-            loc.append("geo:");
-            loc.append(lat);
-            loc.append(",");
-            loc.append(lon);
-            loc.append("?z=10");
+//            StringBuffer loc = new StringBuffer();
+//            loc.append("geo:");
+//            loc.append(lat);
+//            loc.append(",");
+//            loc.append(lon);
+//            loc.append("?z=10");
+            Intent locateIntent = new Intent(roadkill.this,DataMap.class);
+        	locateIntent.putExtra(DataMap.EXTRA_LATITUDE, lat);
+        	locateIntent.putExtra(DataMap.EXTRA_LONGITUDE, lon);
+        	locateIntent.putExtra(DataMap.EXTRA_NAME, Species.getText());
+        	startActivity(locateIntent);
             //Intent datamap = new Intent(android.content.Intent.ACTION_VIEW,Uri.parse(loc.toString()));
             //startActivity(datamap);
             return true;
@@ -306,7 +311,10 @@ public class roadkill extends Activity {
                     		break;
             	        case 2:
             	        	//FROM Map
-            	        	//Intent locateIntent = new Intent(roadkill.this,FindLoc.class);
+            	        	//Intent locateIntent = new Intent(roadkill.this,DataMap.class);
+//            	        	locateIntent.putExtra(DataMap.EXTRA_LATITUDE, lat);
+//            	        	locateIntent.putExtra(DataMap.EXTRA_LONGITUDE, lon);
+//            	        	locateIntent.putExtra(DataMap.EXTRA_NAME, Species.getText());
             	        	//startActivityForResult(locateIntent,PHOTO_BMP);
             	        	LocationSet();
             	        	break;
