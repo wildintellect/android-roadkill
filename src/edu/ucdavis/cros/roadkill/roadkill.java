@@ -256,7 +256,7 @@ public class roadkill extends Activity {
             Intent locateIntent = new Intent(roadkill.this,DataMap.class);
         	locateIntent.putExtra(DataMap.EXTRA_LATITUDE, lat);
         	locateIntent.putExtra(DataMap.EXTRA_LONGITUDE, lon);
-        	locateIntent.putExtra(DataMap.EXTRA_NAME, Species.getText());
+        	locateIntent.putExtra(DataMap.EXTRA_NAME, Species.getText().toString());
         	startActivity(locateIntent);
             //Intent datamap = new Intent(android.content.Intent.ACTION_VIEW,Uri.parse(loc.toString()));
             //startActivity(datamap);
@@ -304,10 +304,9 @@ public class roadkill extends Activity {
                     		break;
             	        case 2:
             	        	//FROM Map
+            	        	lat = "38.6";
+            	            lon = "-121.1";
             	        	//Intent locateIntent = new Intent(roadkill.this,DataMap.class);
-//            	        	locateIntent.putExtra(DataMap.EXTRA_LATITUDE, lat);
-//            	        	locateIntent.putExtra(DataMap.EXTRA_LONGITUDE, lon);
-//            	        	locateIntent.putExtra(DataMap.EXTRA_NAME, Species.getText());
             	        	//startActivityForResult(locateIntent,PHOTO_BMP);
             	        	LocationSet();
             	        	break;

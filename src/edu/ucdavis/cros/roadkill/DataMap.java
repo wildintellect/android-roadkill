@@ -22,12 +22,14 @@ public class DataMap extends MapActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.datamap_view);
         
-        double lat=getIntent().getDoubleExtra(EXTRA_LATITUDE, 0);
-        double lon=getIntent().getDoubleExtra(EXTRA_LONGITUDE, 0);
+        String slat=getIntent().getStringExtra(EXTRA_LATITUDE);
+        String slon=getIntent().getStringExtra(EXTRA_LONGITUDE);
+        double dlat = Double.parseDouble(slat);
+        double dlon = Double.parseDouble(slon);
         
         this.mapView = (MapView) findViewById(R.id.datamap);
         
-        GeoPoint status=new GeoPoint((int)(lat*1000000.0),(int)(lon*1000000.0));
+        GeoPoint status=new GeoPoint((int)(dlat*1000000.0),(int)(dlon*1000000.0));
         mapView.getController().setCenter(status);
         mapView.setBuiltInZoomControls(true);
         
@@ -69,7 +71,7 @@ public class DataMap extends MapActivity {
 		protected boolean onTap(int i) {
 			Toast.makeText(DataMap.this,
 			item.getSnippet(),
-			Toast.LENGTH_SHORT).show();
+			Toast.LENGTH_LONG).show();
 			return(true);
 		}
 		@Override
