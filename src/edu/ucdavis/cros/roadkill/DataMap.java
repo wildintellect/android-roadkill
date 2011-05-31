@@ -15,21 +15,22 @@ public class DataMap extends MapActivity {
 	public static final String EXTRA_LATITUDE="edu.ucdavis.cros.roadkill.EXTRA_LATITUDE";
 	public static final String EXTRA_LONGITUDE="edu.ucdavis.cros.roadkill.EXTRA_LONGITUDE";
 	public static final String EXTRA_NAME="edu.ucdavis.cros.roadkill.EXTRA_NAME";
+	private MapView mapView=null;
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.datamap_view);
         
         double lat=getIntent().getDoubleExtra(EXTRA_LATITUDE, 0);
         double lon=getIntent().getDoubleExtra(EXTRA_LONGITUDE, 0);
         
-        MapView mapView = (MapView) findViewById(R.id.datamap);
-        mapView.setBuiltInZoomControls(true);
+        this.mapView = (MapView) findViewById(R.id.datamap);
         
         GeoPoint status=new GeoPoint((int)(lat*1000000.0),(int)(lon*1000000.0));
         mapView.getController().setCenter(status);
-
+        mapView.setBuiltInZoomControls(true);
+        
         Drawable marker=getResources().getDrawable(android.R.drawable.star_on);
         marker.setBounds(0, 0, marker.getIntrinsicWidth(),
         marker.getIntrinsicHeight());
