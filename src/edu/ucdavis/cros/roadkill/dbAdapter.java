@@ -49,15 +49,16 @@ public class dbAdapter {
     protected static final String LOOKUP = "common";
 
     //List of Database fields to be commonly used
-    private static final String DATABASE_TABLE = "records";
-    private static final String Record_User= "username";
-    private static final String Record_Species = "species";
-    private static final String Record_Lat = "lat";
-    private static final String Record_Lon = "lon";
-    private static final String Record_Time = "time";
-    private static final String Record_Upload = "uploaded";
-    private static final String Record_Photo = "photo";
-    private static final String Record_Rating = "rating";
+    public static final String DATABASE_TABLE = "records";
+    public static final String Key_ID = "_id";
+    public static final String Record_User= "username";
+    public static final String Record_Species = "species";
+    public static final String Record_Lat = "lat";
+    public static final String Record_Lon = "lon";
+    public static final String Record_Time = "time";
+    public static final String Record_Upload = "uploaded";
+    public static final String Record_Photo = "photo";
+    public static final String Record_Rating = "rating";
     
     private final Context myContext;
     //Defines a blank database creation
@@ -158,6 +159,13 @@ public class dbAdapter {
 		return list;
 		//return mCursor;
 	}
+    
+    public Cursor allrecords() {
+		return mDb.query(DATABASE_TABLE, new String[] { Key_ID,
+				Record_User, Record_Species, Record_Lat, Record_Lon,Record_Time,Record_Upload,Record_Photo,Record_Rating }, null, null, null,
+				null, null);
+	}
+
     
     public long save(String species,String lat,String lon,String time,String photopath,float rating) {
     	//Should this be a boolean so it will return true if it works?

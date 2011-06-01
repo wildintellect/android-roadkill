@@ -291,6 +291,10 @@ public class roadkill extends Activity {
         	startActivity(locateIntent);
             //Intent datamap = new Intent(android.content.Intent.ACTION_VIEW,Uri.parse(loc.toString()));
             //startActivity(datamap);
+        	return true;
+        case R.id.op_list:
+        	Intent dataIntent = new Intent(roadkill.this,DataList.class);
+        	startActivity(dataIntent);
             return true;
         default:
             return super.onOptionsItemSelected(item);
@@ -455,6 +459,7 @@ public class roadkill extends Activity {
          }
 //      myDbHelper.open();
       lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,10, LocL);
+      myDbHelper.open();
     }
 	
     @Override
@@ -472,6 +477,6 @@ public class roadkill extends Activity {
            }
 //        myDbHelper.open();
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,10, LocL);
-        
+        myDbHelper.open();
       }
 };

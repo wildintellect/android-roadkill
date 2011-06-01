@@ -21,6 +21,7 @@
         </activity>
         <activity android:name=".TakePhoto"> </activity>
         <activity android:name=".DataMap"></activity>
+        <activity android:name=".DataList"></activity>
 	<uses-library android:name="com.google.android.maps" />
     </application>
 </manifest>
