@@ -9,5 +9,8 @@
     <item android:title="@string/upload"
     	  android:id="@+id/op_upload"
     	  android:icon="@android:drawable/ic_menu_upload" />
+    <item android:title="@string/list"
+    	  android:id="@+id/op_list"
+    	  android:icon="@android:drawable/ic_menu_agenda" />
     
 </menu>   

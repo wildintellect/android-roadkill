@@ -124,8 +124,8 @@ public class TakePhoto extends Activity {
 	    	strLatC = fltLatC.toString();
 	    	strLongC = fltLongC.toString();
 	    	
-	    	latT.setText(strLatC);
-	    	longT.setText(strLongC);
+//	    	latT.setText(strLatC);
+//	    	longT.setText(strLongC);
 		}
     	
 		//Set the time from the Photo
