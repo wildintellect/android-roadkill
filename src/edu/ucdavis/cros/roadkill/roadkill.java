@@ -7,8 +7,12 @@ package edu.ucdavis.cros.roadkill;
 *http://developer.android.com/resources/tutorials/views/hello-datepicker.html
 *
 */
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -22,9 +26,12 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ParseException;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+import android.text.format.DateFormat;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -52,6 +59,7 @@ public class roadkill extends Activity {
 	private AutoCompleteTextView Species;
 	private Button saveButton;
 	public static final int PHOTO_BMP = 1;
+	private Date picDate = null;
 	//Declare Database
 	private dbAdapter myDbHelper;
 	//private DataBaseHelper myDbHelper;
@@ -410,7 +418,33 @@ public class roadkill extends Activity {
 				   };
 			   
 				   if (TakePhoto.strDateTime != null) {
-
+					   
+					  	   
+//					   SimpleDateFormat df = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
+//					   try {
+//						   Date picDate = df.parse(TakePhoto.strDateTime);
+//					   } catch (java.text.ParseException e) {
+//						   // TODO Auto-generated catch block
+//						   e.printStackTrace();
+//					   }
+//					   
+//					   
+//					   TimeZone local_tz = TimeZone.getDefault();
+//					   String local_tz_str = local_tz.toString();
+//					   df.setTimeZone(TimeZone.getTimeZone(local_tz_str));
+//						   
+//					   //Returns the number of milliseconds since January 1, 1970, 00:00:00 GMT 
+//					   long msFromEpochCurr = picDate.getTime();
+//
+//					   //gives you the current offset in ms from the current date
+//					   int offsetFromUTC = local_tz.getOffset(msFromEpochCurr);
+//					   //create a new calendar in current timezone, set to this date and add the offset
+//					   Calendar currCal = Calendar.getInstance(TimeZone.getTimeZone(local_tz_str));
+//					   currCal.setTime(picDate);
+//					   currCal.add(Calendar.MILLISECOND, offsetFromUTC);
+//					   
+//					   String cal_str = currCal.toString(); 
+					   
 					   String strDate = new String (TakePhoto.strDateTime.substring(0,10));
 					   String strTime = new String (TakePhoto.strDateTime.substring(11));
 					   strDate = strDate.replace(":","-");
@@ -436,10 +470,7 @@ public class roadkill extends Activity {
 	@Override
     protected void onResume() { // 
       onRestart();
-      if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-          Intent gpsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-          startActivity(gpsIntent);
-         }
+
 //      myDbHelper.open();
       lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,10, LocL);
     }
@@ -453,10 +484,7 @@ public class roadkill extends Activity {
     @Override
     protected void onRestart() {
         super.onRestart();
-    	if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            Intent gpsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivity(gpsIntent);
-           }
+
 //        myDbHelper.open();
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,10, LocL);
         
