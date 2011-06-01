@@ -291,8 +291,8 @@ public class roadkill extends Activity {
             	        switch (item) {
             	        case 0:
             	        	//From Photo
-            	        	lat = "0";
-            	        	lon = "0";
+            	        	lat = TakePhoto.strLatC;
+            	        	lon = TakePhoto.strLongC;
             	        	LocationSet();
             	        	break;
             	        case 1:
@@ -382,6 +382,7 @@ public class roadkill extends Activity {
 				   //options.outWidth = 100;
 				   // Put bitmap image onto photoButton
 				   Bitmap bitmap = BitmapFactory.decodeFile( _path, options );
+				  
 				   photoButton.setImageBitmap(bitmap);
 				   
 				   //return the exif data in the photo for date, time and location
