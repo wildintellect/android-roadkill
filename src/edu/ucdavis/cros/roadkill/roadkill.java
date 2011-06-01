@@ -435,7 +435,7 @@ public class roadkill extends Activity {
 	
 	@Override
     protected void onResume() { // 
-      super.onRestart();
+      onRestart();
       if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
           Intent gpsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
           startActivity(gpsIntent);
@@ -450,6 +450,15 @@ public class roadkill extends Activity {
       super.onPause();
     }
 
-
-
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    	if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            Intent gpsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(gpsIntent);
+           }
+//        myDbHelper.open();
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,10, LocL);
+        
+      }
 };
