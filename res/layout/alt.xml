@@ -25,11 +25,11 @@
         <Button android:id="@+id/locationButton" android:layout_width="match_parent" android:text="@string/location" android:layout_height="wrap_content"></Button>
     </LinearLayout>
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/linearLayout4">
-        <LinearLayout android:id="@+id/linearLayout5" android:orientation="vertical" android:layout_height="wrap_content" android:layout_width="match_parent" android:layout_weight="1">
+        <LinearLayout android:id="@+id/linearLayout5" android:orientation="vertical" android:layout_height="wrap_content" android:layout_weight="1" android:layout_width="wrap_content">
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/rateLabel" android:text="@string/confidence"></TextView>
-            <RatingBar android:stepSize="1" android:numStars="3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="1" android:id="@+id/ratingBar1"></RatingBar>
+            <RatingBar android:stepSize="1" android:numStars="3" android:layout_height="wrap_content" android:layout_weight="1" android:id="@+id/ratingBar1" android:layout_width="wrap_content"></RatingBar>
         </LinearLayout>
-        <ImageButton android:src="@android:drawable/ic_menu_help" android:id="@+id/buttonHelp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_width="match_parent"></ImageButton>
+        <ImageButton android:src="@android:drawable/ic_menu_help" android:id="@+id/buttonHelp" android:layout_weight="1" android:layout_height="wrap_content" android:layout_width="60dip"></ImageButton>
     </LinearLayout>
     <Button android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/saveButton" android:text="@string/save" android:layout_weight="1"></Button>
 </LinearLayout>
