@@ -44,7 +44,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 
-public class roadkill extends Activity {
+public class roadkill extends Activity implements LocationListener {
 	//Debug log tag id
 	private static final String TAG = "RoadKill";
 	//Declare Variables
@@ -99,19 +99,16 @@ public class roadkill extends Activity {
         this.locationButton = (Button)findViewById(R.id.locationButton);
         this.dateButton = (Button)findViewById(R.id.dateButton);
         this.timeButton = (Button)findViewById(R.id.timeButton);
+        this.saveButton = (Button)findViewById(R.id.saveButton);
         splist();
         timestamp = new StringBuffer();
         
         //Turn on GPS at application start/resume for better/faster fix
         lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-        	Intent gpsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-        	startActivity(gpsIntent);
-        }
-        
-        this.saveButton = (Button)findViewById(R.id.saveButton);
-        
-        
+        Location lastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (lastLocation != null)
+            onLocationChanged(lastLocation);
+ 
         //Set up listeners for each button
         this.photoButton.setOnClickListener(new OnClickListener(){
 //        	@Override
@@ -297,6 +294,9 @@ public class roadkill extends Activity {
             	        	break;
             	        case 1:
             	        	//From GPS
+//            	        	 if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+//            	             	Intent gpsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//            	             	startActivity(gpsIntent);
             	        	Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER); //
                     		lat = String.format("%f",location.getLatitude());
                     		lon = String.format("%f", location.getLongitude());
@@ -363,10 +363,7 @@ public class roadkill extends Activity {
 //    private GPSDialog extends AlertDialog{
 //    TODO: Implement AlertDialog as it's own function/class, work ok as is for now.	
 //    };
-        
-    //TODO: Handle Pause, Stop, Resume etc - don't forget to close the database and turn on/off the GPS
-        
-
+       
 	   @Override
 	   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 //		   super.onActivityResult(requestCode, resultCode, extras);
@@ -404,5 +401,51 @@ public class roadkill extends Activity {
 		   }
 
 	   }
+
+	@Override
+	public void onLocationChanged(Location location) {
+		// TODO Auto-generated method stub
+    }
 	   
+	@Override
+	public void onProviderDisabled(String arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderEnabled(String arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	//TODO: Handle Pause, Stop, Resume etc - don't forget to close the database and turn on/off the GPS
+	@Override
+	public void onStop() { //
+		lm.removeUpdates(this);
+		lm = null;
+		myDbHelper.close();
+		super.onDestroy();
+
+	}
+	
+	@Override
+    protected void onResume() { // 
+      super.onRestart();
+      //myDbHelper.open();
+      //lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,10, this);
+    }
+	
+    @Override
+    protected void onPause() { //
+      //lm.removeUpdates(this);
+      //myDbHelper.close();
+      super.onPause();
+    }
 };

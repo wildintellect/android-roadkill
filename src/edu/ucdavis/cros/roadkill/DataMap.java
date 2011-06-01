@@ -30,6 +30,7 @@ public class DataMap extends MapActivity {
         this.mapView = (MapView) findViewById(R.id.datamap);
         
         GeoPoint status=new GeoPoint((int)(dlat*1000000.0),(int)(dlon*1000000.0));
+        mapView.getController().setZoom(10);
         mapView.getController().setCenter(status);
         mapView.setBuiltInZoomControls(true);
         

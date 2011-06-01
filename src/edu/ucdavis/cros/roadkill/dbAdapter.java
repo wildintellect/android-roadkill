@@ -152,6 +152,8 @@ public class dbAdapter {
 		ArrayList<String> list = new ArrayList<String>();
 	    while(results.moveToNext())
 	    	list.add(results.getString(results.getColumnIndex("common")));
+	    //Close the cursor to avoid errors later
+	    results.close();
 		return list;
 		//return mCursor;
 	}

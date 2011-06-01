@@ -6,10 +6,10 @@ public class DateTime {
 	public static void DupdateDisplay(int mYear,int mMonth, int mDay,Button dateButton) {
 		dateButton.setText(
                 new StringBuilder()
+                .append(mYear).append("-")
                 // Month is 0 based so add 1
-                .append(mMonth + 1).append("-")
-                .append(mDay).append("-")
-                .append(mYear).append(" "));
+                .append(pad(mMonth + 1)).append("-")
+                .append(pad(mDay)));
 		
 	}
 	// updates the time we display in the TextView

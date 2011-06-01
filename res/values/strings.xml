@@ -12,4 +12,5 @@
     <string name="date">Date</string>
     <string name="time">Time</string>
     <string name="upload">Upload</string>
+    <string name="list">List Data</string>
 </resources>
