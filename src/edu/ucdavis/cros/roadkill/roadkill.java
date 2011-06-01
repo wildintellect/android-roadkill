@@ -350,7 +350,7 @@ public class roadkill extends Activity {
     // the callback received when the user "sets" the time in the dialog
     private TimePickerDialog.OnTimeSetListener mTimeSetListener =
         new TimePickerDialog.OnTimeSetListener() {
-    		@Override
+//    		@Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 mHour = hourOfDay;
                 mMinute = minute;
@@ -391,16 +391,13 @@ public class roadkill extends Activity {
 				   };
 			   
 				   if (TakePhoto.strDateTime != null) {
-					   SimpleDateFormat dateParser = new SimpleDateFormat("yyy:MM:dd HH:mm:ss");
-					   SimpleDateFormat dateConverter = new SimpleDateFormat ("yyy-MM-dd'T'HH:mm:ss");
-					   Date d = null;
-							try {
-								d = dateParser.parse(TakePhoto.strDateTime);
-							} catch (ParseException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-					   timestamp.append(dateConverter.format(d));
+
+					   String strDate = new String (TakePhoto.strDateTime.substring(0,10));
+					   String strTime = new String (TakePhoto.strDateTime.substring(11));
+					   strDate = strDate.replace(":","-");
+					   dateButton.setText(strDate);
+					   timeButton.setText(strTime);
+					   
 				   }
 			   }			   
 		   }
