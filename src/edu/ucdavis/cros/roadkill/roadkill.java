@@ -7,12 +7,8 @@ package edu.ucdavis.cros.roadkill;
 *http://developer.android.com/resources/tutorials/views/hello-datepicker.html
 *
 */
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -45,16 +41,12 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 
-public class roadkill extends Activity implements LocationListener {
+public class roadkill extends Activity {
 	//Debug log tag id
 	private static final String TAG = "RoadKill";
 	//Declare Variables
 	public ImageButton photoButton;
 	public static String _path;
-//	private String strLatLong;
-//	private Date d;
-//	private SimpleDateFormat dateParser;
-//	private SimpleDateFormat dateConverter;
 	private Button locationButton;
 	private Button dateButton;
 	private Button timeButton;
@@ -79,7 +71,7 @@ public class roadkill extends Activity implements LocationListener {
     private RatingBar ratingBar;
     //private float rating;
     LocationManager lm = null;
-    LocationListener ll = null;
+    LocationListener LocL = null;
 
     /** Called when the activity is first created. */
     @Override
@@ -110,11 +102,40 @@ public class roadkill extends Activity implements LocationListener {
         timestamp = new StringBuffer();
         
         //Turn on GPS at application start/resume for better/faster fix
+        //Turn on GPS at application start/resume for better/faster fix
         lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        Location lastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        if (lastLocation != null)
-            onLocationChanged(lastLocation);
- 
+        if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+         Intent gpsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+         startActivity(gpsIntent);
+        }
+        
+        LocL = new LocationListener() {
+
+        	public void onLocationChanged(Location location) {
+        		// TODO Auto-generated method stub
+            }
+        	   
+        	public void onProviderDisabled(String arg0) {
+        		// TODO Auto-generated method stub
+        		
+        	}
+
+        	public void onProviderEnabled(String arg0) {
+        		// TODO Auto-generated method stub
+        		Log.i(TAG, "GPS Enabled");
+        		
+        	}
+
+        	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+        		// TODO Auto-generated method stub
+        		
+        	}
+        
+        };        
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, LocL);
+    
+        
+        
         //Set up listeners for each button
         this.photoButton.setOnClickListener(new OnClickListener(){
 //        	@Override
@@ -301,8 +322,8 @@ public class roadkill extends Activity implements LocationListener {
             	        switch (item) {
             	        case 0:
             	        	//From Photo
-            	        	lat = "0";
-            	        	lon = "0";
+            	        	lat = TakePhoto.strLatC;
+            	        	lon = TakePhoto.strLongC;
             	        	LocationSet();
             	        	break;
             	        case 1:
@@ -363,7 +384,7 @@ public class roadkill extends Activity implements LocationListener {
     // the callback received when the user "sets" the time in the dialog
     private TimePickerDialog.OnTimeSetListener mTimeSetListener =
         new TimePickerDialog.OnTimeSetListener() {
-    		@Override
+//    		@Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 mHour = hourOfDay;
                 mMinute = minute;
@@ -392,6 +413,7 @@ public class roadkill extends Activity implements LocationListener {
 				   //options.outWidth = 100;
 				   // Put bitmap image onto photoButton
 				   Bitmap bitmap = BitmapFactory.decodeFile( _path, options );
+				  
 				   photoButton.setImageBitmap(bitmap);
 				   
 				   //return the exif data in the photo for date, time and location
@@ -401,66 +423,55 @@ public class roadkill extends Activity implements LocationListener {
 				   };
 			   
 				   if (TakePhoto.strDateTime != null) {
-					   SimpleDateFormat dateParser = new SimpleDateFormat("yyy:MM:dd HH:mm:ss");
-					   SimpleDateFormat dateConverter = new SimpleDateFormat ("yyy-MM-dd'T'HH:mm:ss");
-					   Date d = null;
-							try {
-								d = dateParser.parse(TakePhoto.strDateTime);
-							} catch (ParseException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-					   timestamp.append(dateConverter.format(d));
+
+					   String strDate = new String (TakePhoto.strDateTime.substring(0,10));
+					   String strTime = new String (TakePhoto.strDateTime.substring(11));
+					   strDate = strDate.replace(":","-");
+					   dateButton.setText(strDate);
+					   timeButton.setText(strTime);
+					   
 				   }
 			   }			   
 		   }
 
 	   }
 
-	@Override
-	public void onLocationChanged(Location location) {
-		// TODO Auto-generated method stub
-    }
-	   
-	@Override
-	public void onProviderDisabled(String arg0) {
-		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
-	public void onProviderEnabled(String arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	//TODO: Handle Pause, Stop, Resume etc - don't forget to close the database and turn on/off the GPS
 	@Override
 	public void onStop() { //
-		lm.removeUpdates(this);
-		lm = null;
+		lm.removeUpdates(LocL);
 		myDbHelper.close();
-		super.onDestroy();
-
+		super.onStop();
 	}
 	
 	@Override
     protected void onResume() { // 
-      super.onRestart();
-      //myDbHelper.open();
-      //lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,10, this);
+      onRestart();
+      if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+          Intent gpsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+          startActivity(gpsIntent);
+         }
+//      myDbHelper.open();
+      lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,10, LocL);
     }
 	
     @Override
     protected void onPause() { //
-      //lm.removeUpdates(this);
       //myDbHelper.close();
       super.onPause();
     }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    	if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            Intent gpsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(gpsIntent);
+           }
+//        myDbHelper.open();
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,10, LocL);
+        
+      }
 };
