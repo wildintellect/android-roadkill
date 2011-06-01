@@ -57,6 +57,7 @@ public class dbAdapter {
     private static final String Record_Time = "time";
     private static final String Record_Upload = "uploaded";
     private static final String Record_Photo = "photo";
+    private static final String Record_Rating = "rating";
     
     private final Context myContext;
     //Defines a blank database creation
@@ -158,7 +159,7 @@ public class dbAdapter {
 		//return mCursor;
 	}
     
-    public long save(String species,String lat,String lon,String time,String photopath) {
+    public long save(String species,String lat,String lon,String time,String photopath,float rating) {
     	//Should this be a boolean so it will return true if it works?
     	ContentValues initialValues = new ContentValues();
     	initialValues.put( Record_User ,"me");
@@ -168,6 +169,7 @@ public class dbAdapter {
     	initialValues.put( Record_Time ,time);
     	initialValues.put( Record_Upload ,"0");
     	initialValues.put( Record_Photo , photopath);
+    	initialValues.put( Record_Rating, rating);
 
         
         return mDb.insert(DATABASE_TABLE, null, initialValues);

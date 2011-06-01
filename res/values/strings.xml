@@ -13,4 +13,5 @@
     <string name="time">Time</string>
     <string name="upload">Upload</string>
     <string name="list">List Data</string>
+    <string name="confidence">Confidence</string>
 </resources>

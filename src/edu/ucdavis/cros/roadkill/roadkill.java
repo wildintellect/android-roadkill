@@ -40,6 +40,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
+import android.widget.RatingBar;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -57,6 +58,7 @@ public class roadkill extends Activity implements LocationListener {
 	private Button locationButton;
 	private Button dateButton;
 	private Button timeButton;
+	private ImageButton helpButton;
 	private AutoCompleteTextView Species;
 	private Button saveButton;
 	public static final int PHOTO_BMP = 1;
@@ -74,6 +76,8 @@ public class roadkill extends Activity implements LocationListener {
     private String lon = "-121.5";
     static final int LOCATION_DIALOG_ID = 3;
     private StringBuffer timestamp;
+    private RatingBar ratingBar;
+    //private float rating;
     LocationManager lm = null;
     LocationListener ll = null;
 
@@ -99,7 +103,9 @@ public class roadkill extends Activity implements LocationListener {
         this.locationButton = (Button)findViewById(R.id.locationButton);
         this.dateButton = (Button)findViewById(R.id.dateButton);
         this.timeButton = (Button)findViewById(R.id.timeButton);
+        this.helpButton = (ImageButton)findViewById(R.id.buttonHelp);
         this.saveButton = (Button)findViewById(R.id.saveButton);
+        this.ratingBar = (RatingBar)findViewById(R.id.ratingBar1);
         splist();
         timestamp = new StringBuffer();
         
@@ -175,6 +181,13 @@ public class roadkill extends Activity implements LocationListener {
         	}
     	});
     
+        this.helpButton.setOnClickListener(new OnClickListener(){
+        	@Override
+        	public void onClick(View v) {
+        		
+        	}
+        });
+        
         this.saveButton.setOnClickListener(new OnClickListener(){
 //        	@Override
         	public void onClick(View v) {
@@ -188,7 +201,7 @@ public class roadkill extends Activity implements LocationListener {
         		}
         		String photopath = new String("");
         		//TODO: get real photo path, lat/lon from GPS, implement saving rating
-        		myDbHelper.save(Species.getText().toString(), lat, lon, timestamp.toString(), photopath);
+        		myDbHelper.save(Species.getText().toString(), lat, lon, timestamp.toString(), _path,ratingBar.getRating());
         		Log.i(TAG,"Saved Record");
         	}
     	});
