@@ -161,9 +161,12 @@ public class dbAdapter {
 	}
     
     public Cursor allrecords() {
+    	/*
+    	 * Query for all records entered by the user, order by time descending
+    	 */
 		return mDb.query(DATABASE_TABLE, new String[] { Key_ID,
 				Record_User, Record_Species, Record_Lat, Record_Lon,Record_Time,Record_Upload,Record_Photo,Record_Rating }, null, null, null,
-				null, null);
+				null, Record_Time+" DESC");
 	}
 
     

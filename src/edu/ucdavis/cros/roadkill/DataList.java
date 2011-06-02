@@ -24,13 +24,13 @@ public class DataList extends ListActivity{
 		cursor = myDbHelper.allrecords();
 		startManagingCursor(cursor);
 
-		String[] from = new String[] { dbAdapter.Record_Species };
-		int[] to = new int[] { R.id.label };
+		String[] from = new String[] { dbAdapter.Record_Species,dbAdapter.Record_Time };
+		int[] to = new int[] { R.id.label,R.id.timestamp };
 
 		// Now create an array adapter and set it to display using our row
-		SimpleCursorAdapter notes = new SimpleCursorAdapter(this,
+		SimpleCursorAdapter data = new SimpleCursorAdapter(this,
 				R.layout.data_row, cursor, from, to);
-		setListAdapter(notes);
+		setListAdapter(data);
 	}
 
 }
