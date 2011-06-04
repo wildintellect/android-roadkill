@@ -26,6 +26,7 @@
 
 package edu.ucdavis.cros.roadkill;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import android.app.Activity;
@@ -354,10 +355,16 @@ public class roadkill extends Activity {
 //            	        	 if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 //            	             	Intent gpsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 //            	             	startActivity(gpsIntent);
-            	        	Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER); //
-                    		lat = String.format("%f",location.getLatitude());
-                    		lon = String.format("%f", location.getLongitude());
-                    		LocationSet();
+            	        	try {
+	            	        	Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER); //
+	                    		lat = String.format("%f",location.getLatitude());
+	                    		lon = String.format("%f", location.getLongitude());
+	                    		LocationSet();
+            	        	} catch (Exception except) {
+            	        		//TODO: if GPS is not available ask the user to pick another option
+            	        		Log.e(TAG, except.toString());
+            	        		throw new Error("Unable to get GPS reading");
+            	        	}
                     		break;
             	        case 2:
             	        	//FROM Map
