@@ -39,6 +39,10 @@ public class TakePhoto extends Activity {
     static String strDateTime;
     static String strDateTP;
     static String strTimeTP;
+    static String strPicOr;
+    static String strPicL;
+    static String strPicW;
+    static double picRatio;
     static String cal_str;
     Boolean tz_daylight;
     long ds_offset;
@@ -121,7 +125,13 @@ public class TakePhoto extends Activity {
     	strLong = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
     	strLongRef = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
     	strDateTime = exif.getAttribute(ExifInterface.TAG_DATETIME);
+    	strPicOr = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
+    	strPicL = exif.getAttribute(ExifInterface.TAG_IMAGE_LENGTH);
+    	strPicW = exif.getAttribute(ExifInterface.TAG_IMAGE_WIDTH);
     	
+    	picRatio = Double.parseDouble(strPicW)/Double.parseDouble(strPicL);
+    	
+    		
     	SimpleDateFormat df = new SimpleDateFormat ("yyyy:MM:dd HH:mm:ss");
     	Date picDate = df.parse(strDateTime);
     	
@@ -145,7 +155,8 @@ public class TakePhoto extends Activity {
     		localmillis = datemillis + st_offset;
     	}
     	
-    	Date localDate = new Date(localmillis);
+//    	Date localDate = new Date(localmillis);
+    	Date localDate = new Date(datemillis);
     	localDateStr = localDate.toLocaleString();
     	SimpleDateFormat milliDF = new SimpleDateFormat ("MMM d, yyyy hh:mm:ss a");
     	localDF = milliDF.parse(localDateStr);
