@@ -21,12 +21,19 @@
 package edu.ucdavis.cros.roadkill;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.hardware.Camera;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.text.format.Time;
 import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -50,6 +57,22 @@ public class TakePhoto extends Activity {
     static String strLongC;
     String strLongRef;
     static String strDateTime;
+    static String strDateTP;
+    static String strTimeTP;
+    static String strPicOr;
+    static String strPicL;
+    static String strPicW;
+    static double picRatio;
+    static String cal_str;
+    Boolean tz_daylight;
+    long ds_offset;
+    long st_offset;
+    long datemillis;
+    long localmillis;
+    static String localDateStr;
+    Date localDate;
+    Date localDF;
+    static String localDFreg;
     TextView longT;
     TextView latT;
     TextView datetimeT;
@@ -68,7 +91,6 @@ public class TakePhoto extends Activity {
     	Log.i("TakePhoto", "startCameraActivity()" );
     	File file = new File( roadkill._path );
     	Uri outputFileUri = Uri.fromFile( file );
-    	
     	// Start intent that will open the camera
     	Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE );
     	intent.putExtra( MediaStore.EXTRA_OUTPUT, outputFileUri );
@@ -90,7 +112,12 @@ public class TakePhoto extends Activity {
     			break;
     			
     		case -1:
-    			onPhotoTaken();
+			try {
+				onPhotoTaken();
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
     			Intent returnIntent = new Intent();
     			setResult(RESULT_OK,returnIntent);
     			finish();
@@ -98,7 +125,7 @@ public class TakePhoto extends Activity {
     	}
     }
     
-	public boolean onPhotoTaken()
+	public boolean onPhotoTaken() throws ParseException
     {
     	Log.i( "RoadKillPhoto", "onPhotoTaken" );
     	
@@ -118,7 +145,46 @@ public class TakePhoto extends Activity {
     	strLong = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
     	strLongRef = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
     	strDateTime = exif.getAttribute(ExifInterface.TAG_DATETIME);
+    	strPicOr = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
+    	strPicL = exif.getAttribute(ExifInterface.TAG_IMAGE_LENGTH);
+    	strPicW = exif.getAttribute(ExifInterface.TAG_IMAGE_WIDTH);
     	
+    	picRatio = Double.parseDouble(strPicW)/Double.parseDouble(strPicL);
+    	
+    		
+    	SimpleDateFormat df = new SimpleDateFormat ("yyyy:MM:dd HH:mm:ss");
+    	Date picDate = df.parse(strDateTime);
+    	
+    	// Get local Timezone
+    	TimeZone local_tz = TimeZone.getDefault();
+  	
+    	// Check whether picDate is in Daylight savings
+    	tz_daylight = local_tz.inDaylightTime(picDate);
+    	// Daylight savings local offset
+    	ds_offset = local_tz.getDSTSavings();
+    	// Standard offset time
+    	st_offset = local_tz.getRawOffset();
+    	
+    	// Convert string time to milliseconds
+    	datemillis = picDate.getTime();
+    	
+    	// Check to see whether it is DST, and make offset accordingly
+    	if (tz_daylight) {
+    		localmillis = datemillis + st_offset + ds_offset;	
+    	} else {
+    		localmillis = datemillis + st_offset;
+    	}
+    	
+//    	Date localDate = new Date(localmillis);
+    	Date localDate = new Date(datemillis);
+    	localDateStr = localDate.toLocaleString();
+    	SimpleDateFormat milliDF = new SimpleDateFormat ("MMM d, yyyy hh:mm:ss a");
+    	localDF = milliDF.parse(localDateStr);
+    	localDFreg = df.format(localDF);
+    	
+    	
+		   
+		   
     	//TODO : Comparison appears to fail if the GPS doesn't have a fix
 		//Set the Location from the Photo exif it it has a GPS fix
     	if(strLatRef != null){

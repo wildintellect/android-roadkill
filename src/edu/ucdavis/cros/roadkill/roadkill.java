@@ -24,11 +24,16 @@
 *
 */
 
+
 package edu.ucdavis.cros.roadkill;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -39,6 +44,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -74,6 +80,15 @@ public class roadkill extends Activity {
 	private AutoCompleteTextView Species;
 	private Button saveButton;
 	public static final int PHOTO_BMP = 1;
+	public double phButt_h;
+	public double phButt_w;
+	public double bitmap_h;
+	public double bitmap_w;
+	public boolean rotated;
+	public int hInt;
+	public int wInt;
+	public Bitmap resultBmp;
+	public Bitmap scaledBmp;
 	//Declare Database
 	private dbAdapter myDbHelper;
 	//private DataBaseHelper myDbHelper;
@@ -223,8 +238,10 @@ public class roadkill extends Activity {
     	});
     
         this.helpButton.setOnClickListener(new OnClickListener(){
-        	@Override
+//        	@Override
         	public void onClick(View v) {
+        		Log.i(TAG, "ratingHelp.onClick()" );
+
         		
         	}
         });
@@ -436,15 +453,94 @@ public class roadkill extends Activity {
 		   if (requestCode == PHOTO_BMP) {
 			   if (resultCode == RESULT_OK) {
 				   
-				   // Downsample the image size (inSampleSize > 1) for viewing in App
-				   BitmapFactory.Options options = new BitmapFactory.Options();
 				   //TODO: return image that fits the button
-				   options.inSampleSize = 16;
-				   //options.outWidth = 100;
+
 				   // Put bitmap image onto photoButton
-				   Bitmap bitmap = BitmapFactory.decodeFile( _path, options );
-				  
-				   photoButton.setImageBitmap(bitmap);
+				   Bitmap bitmap = BitmapFactory.decodeFile( _path );
+				   phButt_w = photoButton.getWidth();
+				   phButt_h = photoButton.getHeight();
+	   
+				   // determine Bitmap orientation
+				   int picOr = Integer.valueOf(TakePhoto.strPicOr);
+				   Matrix mat = new Matrix();
+				   
+				   switch (picOr) {
+				   
+				   case 1:
+					   // taken in Landscape so rotate 0 degrees
+					   bitmap_w = ( phButt_w - 10 );
+					   bitmap_h = ( phButt_h - 10 )*(TakePhoto.picRatio);
+					  // double hFl = Math.floor(bitmap_h);
+					   hInt = (int)bitmap_h;
+					   wInt = (int)bitmap_w;
+				       scaledBmp = Bitmap.createScaledBitmap(bitmap, hInt, wInt, true);
+				       bitmap.recycle();
+				       bitmap = null;
+
+				       mat.postRotate(0);
+				       resultBmp = Bitmap.createBitmap(scaledBmp, 0, 0, hInt, wInt, mat, true);
+				       
+				       photoButton.setImageBitmap(resultBmp);
+				       break;
+				       
+				   case 3:
+					   // taken upside down Landscape so rotate 180 degrees
+					   bitmap_w = ( phButt_w - 10 )*(TakePhoto.picRatio);
+					   bitmap_h = ( phButt_h - 10 );
+					  // double hFl = Math.floor(bitmap_h);
+					   hInt = (int)bitmap_h;
+					   wInt = (int)bitmap_w;
+				       scaledBmp = Bitmap.createScaledBitmap(bitmap, hInt, wInt, true);
+				       bitmap.recycle();
+				       bitmap = null;
+
+				       mat.postRotate(180);
+				       resultBmp = Bitmap.createBitmap(scaledBmp, 0, 0, hInt, wInt, mat, true);
+				       
+				       photoButton.setImageBitmap(resultBmp);
+				       break;
+				       
+				   case 6:
+					   // taken in Portrait so rotate 90 degrees
+					   bitmap_w = ( phButt_w - 10 )*(1/TakePhoto.picRatio);
+					   bitmap_h = ( phButt_h - 10 );
+					  // double hFl = Math.floor(bitmap_h);
+					   hInt = (int)bitmap_h;
+					   wInt = (int)bitmap_w;
+					   scaledBmp = Bitmap.createScaledBitmap(bitmap, hInt, wInt, true);
+				       bitmap.recycle();
+				       bitmap = null;
+
+				       mat.postRotate(90);
+				       resultBmp = Bitmap.createBitmap(scaledBmp, 0, 0, hInt, wInt, mat, true);
+				       
+				       photoButton.setImageBitmap(resultBmp);
+				       break;
+				       
+				   case 8:
+					   // taken upside down Portrait so rotate 270 degrees
+					   bitmap_w = ( phButt_w - 10 )*(1/TakePhoto.picRatio);
+					   bitmap_h = ( phButt_h - 10 );
+					  // double hFl = Math.floor(bitmap_h);
+					   hInt = (int)bitmap_h;
+					   wInt = (int)bitmap_w;
+				       scaledBmp = Bitmap.createScaledBitmap(bitmap, hInt, wInt, true);
+				       bitmap.recycle();
+				       bitmap = null;
+
+				       mat.postRotate(270);
+				       resultBmp = Bitmap.createBitmap(scaledBmp, 0, 0, hInt, wInt, mat, true);
+				       
+				       photoButton.setImageBitmap(resultBmp);
+//				       // Release image resources
+//				       scaledBmp.recycle();
+//				       scaledBmp = null;
+				       break;
+				   }
+				   
+				   
+			
+			   
 				   
 				   //return the exif data in the photo for date, time and location
 				   if (TakePhoto.strLatC != null) {
@@ -454,8 +550,8 @@ public class roadkill extends Activity {
 			   
 				   if (TakePhoto.strDateTime != null) {
 
-					   String strDate = new String (TakePhoto.strDateTime.substring(0,10));
-					   String strTime = new String (TakePhoto.strDateTime.substring(11));
+					   String strDate = new String (TakePhoto.localDFreg.substring(0,10));
+					   String strTime = new String (TakePhoto.localDFreg.substring(11));
 					   strDate = strDate.replace(":","-");
 					   dateButton.setText(strDate);
 					   timeButton.setText(strTime);
@@ -479,10 +575,7 @@ public class roadkill extends Activity {
 	@Override
     protected void onResume() { // 
       onRestart();
-      if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-          Intent gpsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-          startActivity(gpsIntent);
-         }
+
 //      myDbHelper.open();
       lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,10, LocL);
       myDbHelper.open();
@@ -497,10 +590,7 @@ public class roadkill extends Activity {
     @Override
     protected void onRestart() {
         super.onRestart();
-    	if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            Intent gpsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivity(gpsIntent);
-           }
+
 //        myDbHelper.open();
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,10, LocL);
         myDbHelper.open();
