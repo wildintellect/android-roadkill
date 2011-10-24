@@ -15,6 +15,12 @@ Allows users to enter the basic information of:
  * Where (GPS)
  * When (Date/Time)
 
+Notes
+------
+You will need to get your own google maps api key for the map to load properly.
+http://code.google.com/android/add-ons/google-apis/mapkey.html
+Copy and Paste into datamap_view.xml
+
 License
 ------
 This program is free software: you can redistribute it and/or modify
