@@ -17,22 +17,17 @@
  */
 
 /* TODO: Add license information, properly cite the Android dev code under Apache 2.0 license
-*
-*Code inspiration
-*http://developer.android.com/resources/tutorials/views/hello-timepicker.html
-*http://developer.android.com/resources/tutorials/views/hello-datepicker.html
-*
-*/
-
+ *
+ *Code inspiration
+ *http://developer.android.com/resources/tutorials/views/hello-timepicker.html
+ *http://developer.android.com/resources/tutorials/views/hello-datepicker.html
+ *
+ */
 
 package edu.ucdavis.cros.roadkill;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -66,11 +61,10 @@ import android.widget.RatingBar;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-
 public class roadkill extends Activity {
-	//Debug log tag id
+	// Debug log tag id
 	private static final String TAG = "RoadKill";
-	//Declare Variables
+	// Declare Variables
 	public ImageButton photoButton;
 	public static String _path;
 	private Button locationButton;
@@ -80,6 +74,7 @@ public class roadkill extends Activity {
 	private AutoCompleteTextView Species;
 	private Button saveButton;
 	public static final int PHOTO_BMP = 1;
+	public static final int GPS_BMP = 2;
 	public double phButt_h;
 	public double phButt_w;
 	public double bitmap_h;
@@ -89,510 +84,586 @@ public class roadkill extends Activity {
 	public int wInt;
 	public Bitmap resultBmp;
 	public Bitmap scaledBmp;
-	//Declare Database
+
+	// Declare Database
 	private dbAdapter myDbHelper;
-	//private DataBaseHelper myDbHelper;
+	// private DataBaseHelper myDbHelper;
 	private int mYear;
-    private int mMonth;
-    private int mDay;
+	private int mMonth;
+	private int mDay;
 	static final int DATE_DIALOG_ID = 1;
 	private int mHour;
-    private int mMinute;
-    static final int TIME_DIALOG_ID = 2;
-    private String lat = "38.5";
-    private String lon = "-121.5";
-    static final int LOCATION_DIALOG_ID = 3;
-    private StringBuffer timestamp;
-    private RatingBar ratingBar;
-    //private float rating;
-    LocationManager lm = null;
-    LocationListener LocL = null;
+	private int mMinute;
+	static final int TIME_DIALOG_ID = 2;
+	private String lat = "38.5";
+	private String lon = "-121.5";
+	static final int LOCATION_DIALOG_ID = 3;
+	private StringBuffer timestamp;
+	private RatingBar ratingBar;
+	// private float rating;
+	LocationManager lm = null;
+	LocationListener LocL = null;
 
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.alt);
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.alt);
 
-        myDbHelper = new dbAdapter(this);
-        myDbHelper.open();
-        
-        //DataBaseHelper myDbHelper = new DataBaseHelper();
-        //myDbHelper = new DataBaseHelper(this);
- 
-        //try { myDbHelper.createDataBase();
-        //} catch (IOException ioe) {
- 		//throw new Error("Unable to create database"); 
-        //}
+		myDbHelper = new dbAdapter(this);
+		myDbHelper.open();
 
-        
-        this.photoButton = (ImageButton)findViewById(R.id.photoButton);
-        this.locationButton = (Button)findViewById(R.id.locationButton);
-        this.dateButton = (Button)findViewById(R.id.dateButton);
-        this.timeButton = (Button)findViewById(R.id.timeButton);
-        this.helpButton = (ImageButton)findViewById(R.id.buttonHelp);
-        this.saveButton = (Button)findViewById(R.id.saveButton);
-        this.ratingBar = (RatingBar)findViewById(R.id.ratingBar1);
-        splist();
-        timestamp = new StringBuffer();
-        
-        //Turn on GPS at application start/resume for better/faster fix
-        //Turn on GPS at application start/resume for better/faster fix
-        lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-         Intent gpsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-         startActivity(gpsIntent);
-        }
-        
-        LocL = new LocationListener() {
+		// DataBaseHelper myDbHelper = new DataBaseHelper();
+		// myDbHelper = new DataBaseHelper(this);
 
-        	public void onLocationChanged(Location location) {
-        		// TODO Auto-generated method stub
-            }
-        	   
-        	public void onProviderDisabled(String arg0) {
-        		// TODO Auto-generated method stub
-        		
-        	}
+		// try { myDbHelper.createDataBase();
+		// } catch (IOException ioe) {
+		// throw new Error("Unable to create database");
+		// }
 
-        	public void onProviderEnabled(String arg0) {
-        		// TODO Auto-generated method stub
-        		Log.i(TAG, "GPS Enabled");
-        		
-        	}
+		this.photoButton = (ImageButton) findViewById(R.id.photoButton);
+		this.locationButton = (Button) findViewById(R.id.locationButton);
+		this.dateButton = (Button) findViewById(R.id.dateButton);
+		this.timeButton = (Button) findViewById(R.id.timeButton);
+		this.helpButton = (ImageButton) findViewById(R.id.buttonHelp);
+		this.saveButton = (Button) findViewById(R.id.saveButton);
+		this.ratingBar = (RatingBar) findViewById(R.id.ratingBar1);
+		splist();
+		timestamp = new StringBuffer();
 
-        	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-        		// TODO Auto-generated method stub
-        		
-        	}
-        
-        };        
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, LocL);
-    
-        
-        
-        //Set up listeners for each button
-        this.photoButton.setOnClickListener(new OnClickListener(){
-//        	@Override
-        	public void onClick(View v) {
-        		//Call the code to take the picture
-        		Log.i(TAG, "photoButton.onClick()" );
-        		
-        		// set path for photo to be saved in db
-        		_path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "CROSPic.jpg";
-        		
-        		//Start TakePhoto Activity
-        		Intent photoIntent = new Intent(roadkill.this,TakePhoto.class);
-        		startActivityForResult(photoIntent,PHOTO_BMP);
-        		
-        	}
-        });
-    	this.locationButton.setOnClickListener(new OnClickListener(){
-//        	@Override
-        	public void onClick(View v) {
-        		Log.i(TAG, "locationButton.onClick()" );
-        		//open a selection window, 
-        		//ask the user if they want the GPS fix
-        		//or adjust manually on a map
-        		showDialog(LOCATION_DIALOG_ID);
-        	}
-    	});
-        this.dateButton.setOnClickListener(new OnClickListener(){
-//        	@Override
-        	public void onClick(View v) {
-        		//open a popup with a date/time selector widget
-        		Log.i(TAG, "dateButton.onClick()" );
-        		showDialog(DATE_DIALOG_ID);
-        	}
-    	});
-        //Setup the current date/time for the dialog
-        final Calendar c = Calendar.getInstance();
-        mYear = c.get(Calendar.YEAR);
-        mMonth = c.get(Calendar.MONTH);
-        mDay = c.get(Calendar.DAY_OF_MONTH);
-        //Enable the next line only if you want set the data immediately
-        //updateDisplay();
-        this.timeButton.setOnClickListener(new OnClickListener(){
-//        	@Override
-        	public void onClick(View v) {
-        		//open a popup with a date/time selector widget
-        		Log.i(TAG, "dateButton.onClick()" );
-        		showDialog(TIME_DIALOG_ID);
-        	}
-    	});
-        // get the current time
-        mHour = c.get(Calendar.HOUR_OF_DAY);
-        mMinute = c.get(Calendar.MINUTE);
+		// Turn on GPS at application start/resume for better/faster fix
+		// Turn on GPS at application start/resume for better/faster fix
+		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			Intent gpsIntent = new Intent(
+					Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+			startActivity(gpsIntent);
+		}
 
-        
-        this.Species.setOnClickListener(new OnClickListener(){
-//        	@Override
-        	public void onClick(View v) {
-        		Log.i(TAG, "Species.onClick()" );
-        		//clear the Species label once the start typing
-        		//auto match based on the pre-seeded data
-        		//if (Species.getText() == "Species"){
-        		//		Species.setText("");
-        		
-        	}
-    	});
-    
-        this.helpButton.setOnClickListener(new OnClickListener(){
-//        	@Override
-        	public void onClick(View v) {
-        		Log.i(TAG, "ratingHelp.onClick()" );
+		LocL = new LocationListener() {
 
-        		
-        	}
-        });
-        
-        this.saveButton.setOnClickListener(new OnClickListener(){
-//        	@Override
-        	public void onClick(View v) {
-        		//save data to record, if existing record update information
-        		Log.i(TAG, "saveButton.onClick()" );
-        		Species.performValidation();
-        		if (timestamp.length() < 1) {
-	        		timestamp.append(dateButton.getText());
-	        		timestamp.append("T");
-	        		timestamp.append(timeButton.getText());
-        		}
-        		String photopath = new String("");
-        		//TODO: get real photo path, lat/lon from GPS, implement saving rating
-        		myDbHelper.save(Species.getText().toString(), lat, lon, timestamp.toString(), _path,ratingBar.getRating());
-        		Log.i(TAG,"Saved Record");
-        	}
-    	});
-    
-    }
-    
-    private void splist() {
-    	//Set the species list from a database query
-    	final ArrayList<String> spplist = myDbHelper.spplist();
-//        startManagingCursor(sppCursor);
-//        String[] from = new String[]{"common"};
-//        int[] to = new int[]{R.id.speciesTextView};
-//        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.simple_dropdown_item_1line, sppCursor, from, to);
-//        SpCurAdapter adapter = new SpCurAdapter(this,sppCursor);
-//        int desiredColumn = 1;
-//        adapter.setCursorToStringConverter(null);
-//        adapter.setStringConversionColumn(desiredColumn);
+			public void onLocationChanged(Location location) {
+				// TODO Auto-generated method stub
+			}
 
-    	//TODO: fix, Hack to convert arraylist to stringarray?
-    	final String[] mString = (String []) spplist.toArray(new String [spplist.size()]);
-    	//Method uses a straight string array
-//    	ArrayAdapter<String> adapter = new ArrayAdapter<String> (this,android.R.layout.simple_dropdown_item_1line, dbAdapter.animalList);
-    	ArrayAdapter<String> adapter = new ArrayAdapter<String> (this,android.R.layout.simple_dropdown_item_1line, mString);
-    	//adapter.setStringConversionColumn(1);
-        //adapter.convertToString(sppCursor);
-        this.Species = (AutoCompleteTextView) findViewById(R.id.speciesTextView);
-        this.Species.setAdapter(adapter);
-    }
-    
-    
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-    	//Triggered from the device menu button
-    	//Allows user to reach other views and configure the application
-    	// TODO : implement opening views based on button picked, with onClick property in menu.xml
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.view_menu, menu);
-        return true;
-    }   
+			public void onProviderDisabled(String arg0) {
+				// TODO Auto-generated method stub
 
-    
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-    	//handles the pop up menu
-    	switch (item.getItemId()) {
-        case R.id.op_settings:
-            Log.i(TAG,"Settings clicked");
-            return true;
-        case R.id.op_upload:
-            Log.i(TAG,"Upload clicked");
-            return true;
-        case R.id.op_map:
-            Log.i(TAG,"Map clicked");
-            //Intent datamap = new Intent(roadkill.this,Maps.class);
-            //TODO: replace Intent with Map Activity that shows the data
-//            StringBuffer loc = new StringBuffer();
-//            loc.append("geo:");
-//            loc.append(lat);
-//            loc.append(",");
-//            loc.append(lon);
-//            loc.append("?z=10");
-            Intent locateIntent = new Intent(roadkill.this,DataMap.class);
-        	locateIntent.putExtra(DataMap.EXTRA_LATITUDE, lat);
-        	locateIntent.putExtra(DataMap.EXTRA_LONGITUDE, lon);
-        	locateIntent.putExtra(DataMap.EXTRA_NAME, Species.getText().toString());
-        	startActivity(locateIntent);
-            //Intent datamap = new Intent(android.content.Intent.ACTION_VIEW,Uri.parse(loc.toString()));
-            //startActivity(datamap);
-        	return true;
-        case R.id.op_list:
-        	Intent dataIntent = new Intent(roadkill.this,DataList.class);
-        	startActivity(dataIntent);
-            return true;
-        default:
-            return super.onOptionsItemSelected(item);
-        }
+			}
 
-    }
-    
-    @Override
-    protected Dialog onCreateDialog(int id) {
-            switch (id) {
+			public void onProviderEnabled(String arg0) {
+				// TODO Auto-generated method stub
+				Log.i(TAG, "GPS Enabled");
 
-            case DATE_DIALOG_ID:
-                    return new DatePickerDialog(this,
-                            mDateSetListener,
-                            mYear, mMonth, mDay);
-            
-            case TIME_DIALOG_ID:
-		        return new TimePickerDialog(this,
-		                mTimeSetListener, mHour, mMinute, false);
-		    
-            case LOCATION_DIALOG_ID: {
-            	final CharSequence[] items = {"From Photo Data", "From GPS", "From Map"};
-            	AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            	builder.setTitle("Get Location:");
-            	builder.setItems(items, new DialogInterface.OnClickListener() {
-            	    public void onClick(DialogInterface dialog, int item) {
-            	        Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_SHORT).show();
-            	        Log.i(TAG,items[item].toString());
-            	        switch (item) {
-            	        case 0:
-            	        	//From Photo
-            	        	lat = TakePhoto.strLatC;
-            	        	lon = TakePhoto.strLongC;
-            	        	LocationSet();
-            	        	break;
-            	        case 1:
-            	        	//From GPS
-//            	        	 if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-//            	             	Intent gpsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//            	             	startActivity(gpsIntent);
-            	        	try {
-	            	        	Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER); //
-	                    		lat = String.format("%f",location.getLatitude());
-	                    		lon = String.format("%f", location.getLongitude());
-	                    		LocationSet();
-            	        	} catch (Exception except) {
-            	        		//TODO: if GPS is not available ask the user to pick another option
-            	        		Log.e(TAG, except.toString());
-            	        		throw new Error("Unable to get GPS reading");
-            	        	}
-                    		break;
-            	        case 2:
-            	        	//FROM Map
-            	        	lat = "38.6";
-            	            lon = "-121.1";
-            	        	//Intent locateIntent = new Intent(roadkill.this,DataMap.class);
-            	        	//startActivityForResult(locateIntent,PHOTO_BMP);
-            	        	LocationSet();
-            	        	break;
-            	        }
-            	    }
-            	});
-            	AlertDialog gpsalert = builder.create();
-            	return gpsalert;
-            }
-            }
+			}
 
-            return null;
-    }
-    private void LocationSet(){
-    	StringBuffer loc = new StringBuffer();
-        loc.append(lat);
-        loc.append(",");
-        loc.append(lon);
-    	locationButton.setText(loc.toString());
-    }
-    protected void onPrepareDialog(int id, Dialog dialog) {
-            switch (id) {
+			public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+				// TODO Auto-generated method stub
 
-            case DATE_DIALOG_ID:
-                    ((DatePickerDialog) dialog).updateDate(mYear, mMonth, mDay);
-                    break;
-            }
-    }    
-    
-    private DatePickerDialog.OnDateSetListener mDateSetListener =
-            new DatePickerDialog.OnDateSetListener() {
+			}
 
-            public void onDateSet(DatePicker view, int year, int monthOfYear,
-                            int dayOfMonth) {
-                    mYear = year;
-                    mMonth = monthOfYear;
-                    mDay = dayOfMonth;
-                    DateTime.DupdateDisplay(mYear,mMonth,mDay,dateButton);
-            }
-    };
-    // the callback received when the user "sets" the time in the dialog
-    private TimePickerDialog.OnTimeSetListener mTimeSetListener =
-        new TimePickerDialog.OnTimeSetListener() {
-//    		@Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                mHour = hourOfDay;
-                mMinute = minute;
-                DateTime.TupdateDisplay(mHour,mMinute,timeButton);
-            }
+		};
+		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, LocL);
 
-			
-    };
-    
-//    private GPSDialog extends AlertDialog{
-//    TODO: Implement AlertDialog as it's own function/class, work ok as is for now.	
-//    };
-       
-	   @Override
-	   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//		   super.onActivityResult(requestCode, resultCode, extras);
-		   //return the photo to the button as a thumbnail
+		// Set up listeners for each button
+		this.photoButton.setOnClickListener(new OnClickListener() {
+			// @Override
+			public void onClick(View v) {
+				// Call the code to take the picture
+				Log.i(TAG, "photoButton.onClick()");
 
-		   if (requestCode == PHOTO_BMP) {
-			   if (resultCode == RESULT_OK) {
-				   
-				   //TODO: return image that fits the button
+				// set path for photo to be saved in db
+				_path = Environment
+						.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+						+ "CROSPic.jpg";
 
-				   // Put bitmap image onto photoButton
-				   Bitmap bitmap = BitmapFactory.decodeFile( _path );
-				   phButt_w = photoButton.getWidth();
-				   phButt_h = photoButton.getHeight();
-	   
-				   // determine Bitmap orientation
-				   int picOr = Integer.valueOf(TakePhoto.strPicOr);
-				   Matrix mat = new Matrix();
-				   
-				   switch (picOr) {
-				   
-				   case 1:
-					   // taken in Landscape so rotate 0 degrees
-					   bitmap_w = ( phButt_w - 10 );
-					   bitmap_h = ( phButt_h - 10 )*(TakePhoto.picRatio);
-					  // double hFl = Math.floor(bitmap_h);
-					   hInt = (int)bitmap_h;
-					   wInt = (int)bitmap_w;
-				       scaledBmp = Bitmap.createScaledBitmap(bitmap, hInt, wInt, true);
-				       bitmap.recycle();
-				       bitmap = null;
+				// Start TakePhoto Activity
+				Intent photoIntent = new Intent(roadkill.this, TakePhoto.class);
+				startActivityForResult(photoIntent, PHOTO_BMP);
 
-				       mat.postRotate(0);
-				       resultBmp = Bitmap.createBitmap(scaledBmp, 0, 0, hInt, wInt, mat, true);
-				       
-				       photoButton.setImageBitmap(resultBmp);
-				       break;
-				       
-				   case 3:
-					   // taken upside down Landscape so rotate 180 degrees
-					   bitmap_w = ( phButt_w - 10 )*(TakePhoto.picRatio);
-					   bitmap_h = ( phButt_h - 10 );
-					  // double hFl = Math.floor(bitmap_h);
-					   hInt = (int)bitmap_h;
-					   wInt = (int)bitmap_w;
-				       scaledBmp = Bitmap.createScaledBitmap(bitmap, hInt, wInt, true);
-				       bitmap.recycle();
-				       bitmap = null;
+			}
+		});
+		this.locationButton.setOnClickListener(new OnClickListener() {
+			// @Override
+			public void onClick(View v) {
+				Log.i(TAG, "locationButton.onClick()");
+				// open a selection window,
+				// ask the user if they want the GPS fix
+				// or adjust manually on a map
+				showDialog(LOCATION_DIALOG_ID);
+			}
+		});
+		this.dateButton.setOnClickListener(new OnClickListener() {
+			// @Override
+			public void onClick(View v) {
+				// open a popup with a date/time selector widget
+				Log.i(TAG, "dateButton.onClick()");
+				showDialog(DATE_DIALOG_ID);
+			}
+		});
+		// Setup the current date/time for the dialog
+		final Calendar c = Calendar.getInstance();
+		mYear = c.get(Calendar.YEAR);
+		mMonth = c.get(Calendar.MONTH);
+		mDay = c.get(Calendar.DAY_OF_MONTH);
+		// Enable the next line only if you want set the data immediately
+		// updateDisplay();
+		this.timeButton.setOnClickListener(new OnClickListener() {
+			// @Override
+			public void onClick(View v) {
+				// open a popup with a date/time selector widget
+				Log.i(TAG, "dateButton.onClick()");
+				showDialog(TIME_DIALOG_ID);
+			}
+		});
+		// get the current time
+		mHour = c.get(Calendar.HOUR_OF_DAY);
+		mMinute = c.get(Calendar.MINUTE);
 
-				       mat.postRotate(180);
-				       resultBmp = Bitmap.createBitmap(scaledBmp, 0, 0, hInt, wInt, mat, true);
-				       
-				       photoButton.setImageBitmap(resultBmp);
-				       break;
-				       
-				   case 6:
-					   // taken in Portrait so rotate 90 degrees
-					   bitmap_w = ( phButt_w - 10 )*(1/TakePhoto.picRatio);
-					   bitmap_h = ( phButt_h - 10 );
-					  // double hFl = Math.floor(bitmap_h);
-					   hInt = (int)bitmap_h;
-					   wInt = (int)bitmap_w;
-					   scaledBmp = Bitmap.createScaledBitmap(bitmap, hInt, wInt, true);
-				       bitmap.recycle();
-				       bitmap = null;
+		this.Species.setOnClickListener(new OnClickListener() {
+			// @Override
+			public void onClick(View v) {
+				Log.i(TAG, "Species.onClick()");
+				// clear the Species label once the start typing
+				// auto match based on the pre-seeded data
+				// if (Species.getText() == "Species"){
+				// Species.setText("");
 
-				       mat.postRotate(90);
-				       resultBmp = Bitmap.createBitmap(scaledBmp, 0, 0, hInt, wInt, mat, true);
-				       
-				       photoButton.setImageBitmap(resultBmp);
-				       break;
-				       
-				   case 8:
-					   // taken upside down Portrait so rotate 270 degrees
-					   bitmap_w = ( phButt_w - 10 )*(1/TakePhoto.picRatio);
-					   bitmap_h = ( phButt_h - 10 );
-					  // double hFl = Math.floor(bitmap_h);
-					   hInt = (int)bitmap_h;
-					   wInt = (int)bitmap_w;
-				       scaledBmp = Bitmap.createScaledBitmap(bitmap, hInt, wInt, true);
-				       bitmap.recycle();
-				       bitmap = null;
+			}
+		});
 
-				       mat.postRotate(270);
-				       resultBmp = Bitmap.createBitmap(scaledBmp, 0, 0, hInt, wInt, mat, true);
-				       
-				       photoButton.setImageBitmap(resultBmp);
-//				       // Release image resources
-//				       scaledBmp.recycle();
-//				       scaledBmp = null;
-				       break;
-				   }
-				   
-				   
-			
-			   
-				   
-				   //return the exif data in the photo for date, time and location
-				   if (TakePhoto.strLatC != null) {
-					   String strLatLong = new String (TakePhoto.strLatC + "," + TakePhoto.strLongC);
-					   locationButton.setText(strLatLong);
-				   };
-			   
-				   if (TakePhoto.strDateTime != null) {
+		this.helpButton.setOnClickListener(new OnClickListener() {
+			// @Override
+			public void onClick(View v) {
+				Log.i(TAG, "ratingHelp.onClick()");
 
-					   String strDate = new String (TakePhoto.localDFreg.substring(0,10));
-					   String strTime = new String (TakePhoto.localDFreg.substring(11));
-					   strDate = strDate.replace(":","-");
-					   dateButton.setText(strDate);
-					   timeButton.setText(strTime);
-					   
-				   }
-			   }			   
-		   }
+			}
+		});
 
-	   }
+		this.saveButton.setOnClickListener(new OnClickListener() {
+			// @Override
+			public void onClick(View v) {
+				// save data to record, if existing record update information
+				Log.i(TAG, "saveButton.onClick()");
+				Species.performValidation();
+				if (timestamp.length() < 1) {
+					timestamp.append(dateButton.getText());
+					timestamp.append("T");
+					timestamp.append(timeButton.getText());
+				}
+				String photopath = new String("");
+				// TODO: get real photo path, lat/lon from GPS, implement saving
+				// rating
+				myDbHelper.save(Species.getText().toString(), lat, lon,
+						timestamp.toString(), _path, ratingBar.getRating());
+				Log.i(TAG, "Saved Record");
+			}
+		});
 
+	}
 
+	private void splist() {
+		// Set the species list from a database query
+		final ArrayList<String> spplist = myDbHelper.spplist();
+		// startManagingCursor(sppCursor);
+		// String[] from = new String[]{"common"};
+		// int[] to = new int[]{R.id.speciesTextView};
+		// SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
+		// android.R.layout.simple_dropdown_item_1line, sppCursor, from, to);
+		// SpCurAdapter adapter = new SpCurAdapter(this,sppCursor);
+		// int desiredColumn = 1;
+		// adapter.setCursorToStringConverter(null);
+		// adapter.setStringConversionColumn(desiredColumn);
 
-	//TODO: Handle Pause, Stop, Resume etc - don't forget to close the database and turn on/off the GPS
+		// TODO: fix, Hack to convert arraylist to stringarray?
+		final String[] mString = (String[]) spplist.toArray(new String[spplist
+				.size()]);
+		// Method uses a straight string array
+		// ArrayAdapter<String> adapter = new ArrayAdapter<String>
+		// (this,android.R.layout.simple_dropdown_item_1line,
+		// dbAdapter.animalList);
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_dropdown_item_1line, mString);
+		// adapter.setStringConversionColumn(1);
+		// adapter.convertToString(sppCursor);
+		this.Species = (AutoCompleteTextView) findViewById(R.id.speciesTextView);
+		this.Species.setAdapter(adapter);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Triggered from the device menu button
+		// Allows user to reach other views and configure the application
+		// TODO : implement opening views based on button picked, with onClick
+		// property in menu.xml
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.view_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// handles the pop up menu
+		switch (item.getItemId()) {
+		case R.id.op_settings:
+			Log.i(TAG, "Settings clicked");
+			return true;
+		case R.id.op_upload:
+			Log.i(TAG, "Upload clicked");
+			return true;
+		case R.id.op_map:
+			Log.i(TAG, "Map clicked");
+			// Intent datamap = new Intent(roadkill.this,Maps.class);
+			// TODO: replace Intent with Map Activity that shows the data
+			// StringBuffer loc = new StringBuffer();
+			// loc.append("geo:");
+			// loc.append(lat);
+			// loc.append(",");
+			// loc.append(lon);
+			// loc.append("?z=10");
+			Intent locateIntent = new Intent(roadkill.this, DataMap.class);
+			locateIntent.putExtra(DataMap.EXTRA_LATITUDE, lat);
+			locateIntent.putExtra(DataMap.EXTRA_LONGITUDE, lon);
+			locateIntent.putExtra(DataMap.EXTRA_NAME, Species.getText()
+					.toString());
+			startActivity(locateIntent);
+			// Intent datamap = new
+			// Intent(android.content.Intent.ACTION_VIEW,Uri.parse(loc.toString()));
+			// startActivity(datamap);
+			return true;
+		case R.id.op_list:
+			Intent dataIntent = new Intent(roadkill.this, DataList.class);
+			startActivity(dataIntent);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+
+	}
+
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		switch (id) {
+
+		case DATE_DIALOG_ID:
+			return new DatePickerDialog(this, mDateSetListener, mYear, mMonth,
+					mDay);
+
+		case TIME_DIALOG_ID:
+			return new TimePickerDialog(this, mTimeSetListener, mHour, mMinute,
+					false);
+
+		case LOCATION_DIALOG_ID: {
+			final CharSequence[] items = { "From Photo Data", "From GPS",
+					"From Map" };
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Get Location:");
+			builder.setItems(items, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int item) {
+					Log.i(TAG, items[item].toString());
+					switch (item) {
+					case 0:
+						// From Photo
+						lat = TakePhoto.strLatC;
+						lon = TakePhoto.strLongC;
+						LocationSet();
+						break;
+					case 1:
+						// From GPS
+						// Check to see if GPS is enabled
+
+						if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+
+							// if GPS is not enabled, prompt user to enable GPS
+							AlertDialog.Builder alert = new AlertDialog.Builder(
+									roadkill.this);
+							alert.setTitle("GPS not enabled");
+							alert.setMessage("Would you like to enable GPS?");
+
+							// is user chooses yes, open up GPS settings
+							alert.setPositiveButton("Yes",
+									new DialogInterface.OnClickListener() {
+										public void onClick(
+												DialogInterface dialog,
+												int whichButton) {
+											Intent i = new Intent(
+													Settings.ACTION_SECURITY_SETTINGS);
+											startActivityForResult(i, GPS_BMP);
+										}
+									});
+
+							// if user chooses no, show a warning message
+							alert.setNegativeButton("No",
+									new DialogInterface.OnClickListener() {
+										public void onClick(
+												DialogInterface dialog,
+												int whichButton) {
+											Toast.makeText(
+													getApplicationContext(),
+													"Cannot retrieve location because GPS is not enabled.",
+													Toast.LENGTH_LONG).show();
+										}
+									});
+							alert.show();
+							break;
+						} else {
+							// GPS is already enabled
+							try {
+								Location location = lm
+										.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+								lat = String.format("%f",
+										location.getLatitude());
+								lon = String.format("%f",
+										location.getLongitude());
+								Toast.makeText(getApplicationContext(),
+										"Location set to " + lat + ", " + lon,
+										Toast.LENGTH_LONG).show();
+								LocationSet();
+							} catch (Exception except) {
+							}
+						}
+						break;
+					case 2:
+						// FROM Map
+						lat = "38.6";
+						lon = "-121.1";
+						// Intent locateIntent = new
+						// Intent(roadkill.this,DataMap.class);
+						// startActivityForResult(locateIntent,PHOTO_BMP);
+						LocationSet();
+						break;
+					}
+				}
+			});
+			AlertDialog gpsalert = builder.create();
+			return gpsalert;
+		}
+		}
+
+		return null;
+	}
+
+	private void LocationSet() {
+		StringBuffer loc = new StringBuffer();
+		loc.append(lat);
+		loc.append(",");
+		loc.append(lon);
+		locationButton.setText(loc.toString());
+	}
+
+	protected void onPrepareDialog(int id, Dialog dialog) {
+		switch (id) {
+
+		case DATE_DIALOG_ID:
+			((DatePickerDialog) dialog).updateDate(mYear, mMonth, mDay);
+			break;
+		}
+	}
+
+	private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+
+		public void onDateSet(DatePicker view, int year, int monthOfYear,
+				int dayOfMonth) {
+			mYear = year;
+			mMonth = monthOfYear;
+			mDay = dayOfMonth;
+			DateTime.DupdateDisplay(mYear, mMonth, mDay, dateButton);
+		}
+	};
+	// the callback received when the user "sets" the time in the dialog
+	private TimePickerDialog.OnTimeSetListener mTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
+		// @Override
+		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+			mHour = hourOfDay;
+			mMinute = minute;
+			DateTime.TupdateDisplay(mHour, mMinute, timeButton);
+		}
+
+	};
+
+	// private GPSDialog extends AlertDialog{
+	// TODO: Implement AlertDialog as it's own function/class, work ok as is for
+	// now.
+	// };
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// super.onActivityResult(requestCode, resultCode, extras);
+
+		// return from changing GPS settings
+		if (requestCode == GPS_BMP) {
+			// check to see if GPS has been enabled
+			if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+				Toast.makeText(getApplicationContext(),
+						"GPS has not been enabled.", Toast.LENGTH_LONG).show();
+			} else {
+				// GPS is enabled
+				try {
+					Location location = lm
+							.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+					lat = String.format("%f", location.getLatitude());
+					lon = String.format("%f", location.getLongitude());
+					Toast.makeText(getApplicationContext(),
+							"Location set to " + lat + ", " + lon,
+							Toast.LENGTH_LONG).show();
+					LocationSet();
+				} catch (Exception except) {
+				}
+			}
+		}
+
+		// return the photo to the button as a thumbnail
+		if (requestCode == PHOTO_BMP) {
+			if (resultCode == RESULT_OK) {
+
+				// TODO: return image that fits the button
+
+				// Put bitmap image onto photoButton
+				Bitmap bitmap = BitmapFactory.decodeFile(_path);
+				phButt_w = photoButton.getWidth();
+				phButt_h = photoButton.getHeight();
+
+				// determine Bitmap orientation
+				int picOr = Integer.valueOf(TakePhoto.strPicOr);
+				Matrix mat = new Matrix();
+
+				switch (picOr) {
+
+				case 1:
+					// taken in Landscape so rotate 0 degrees
+					bitmap_w = (phButt_w - 10);
+					bitmap_h = (phButt_h - 10) * (TakePhoto.picRatio);
+					// double hFl = Math.floor(bitmap_h);
+					hInt = (int) bitmap_h;
+					wInt = (int) bitmap_w;
+					scaledBmp = Bitmap.createScaledBitmap(bitmap, hInt, wInt,
+							true);
+					bitmap.recycle();
+					bitmap = null;
+
+					mat.postRotate(0);
+					resultBmp = Bitmap.createBitmap(scaledBmp, 0, 0, hInt,
+							wInt, mat, true);
+
+					photoButton.setImageBitmap(resultBmp);
+					break;
+
+				case 3:
+					// taken upside down Landscape so rotate 180 degrees
+					bitmap_w = (phButt_w - 10) * (TakePhoto.picRatio);
+					bitmap_h = (phButt_h - 10);
+					// double hFl = Math.floor(bitmap_h);
+					hInt = (int) bitmap_h;
+					wInt = (int) bitmap_w;
+					scaledBmp = Bitmap.createScaledBitmap(bitmap, hInt, wInt,
+							true);
+					bitmap.recycle();
+					bitmap = null;
+
+					mat.postRotate(180);
+					resultBmp = Bitmap.createBitmap(scaledBmp, 0, 0, hInt,
+							wInt, mat, true);
+
+					photoButton.setImageBitmap(resultBmp);
+					break;
+
+				case 6:
+					// taken in Portrait so rotate 90 degrees
+					bitmap_w = (phButt_w - 10) * (1 / TakePhoto.picRatio);
+					bitmap_h = (phButt_h - 10);
+					// double hFl = Math.floor(bitmap_h);
+					hInt = (int) bitmap_h;
+					wInt = (int) bitmap_w;
+					scaledBmp = Bitmap.createScaledBitmap(bitmap, hInt, wInt,
+							true);
+					bitmap.recycle();
+					bitmap = null;
+
+					mat.postRotate(90);
+					resultBmp = Bitmap.createBitmap(scaledBmp, 0, 0, hInt,
+							wInt, mat, true);
+
+					photoButton.setImageBitmap(resultBmp);
+					break;
+
+				case 8:
+					// taken upside down Portrait so rotate 270 degrees
+					bitmap_w = (phButt_w - 10) * (1 / TakePhoto.picRatio);
+					bitmap_h = (phButt_h - 10);
+					// double hFl = Math.floor(bitmap_h);
+					hInt = (int) bitmap_h;
+					wInt = (int) bitmap_w;
+					scaledBmp = Bitmap.createScaledBitmap(bitmap, hInt, wInt,
+							true);
+					bitmap.recycle();
+					bitmap = null;
+
+					mat.postRotate(270);
+					resultBmp = Bitmap.createBitmap(scaledBmp, 0, 0, hInt,
+							wInt, mat, true);
+
+					photoButton.setImageBitmap(resultBmp);
+					// // Release image resources
+					// scaledBmp.recycle();
+					// scaledBmp = null;
+					break;
+				}
+
+				// return the exif data in the photo for date, time and location
+				if (TakePhoto.strLatC != null) {
+					String strLatLong = new String(TakePhoto.strLatC + ","
+							+ TakePhoto.strLongC);
+					locationButton.setText(strLatLong);
+				}
+				;
+
+				if (TakePhoto.strDateTime != null) {
+
+					String strDate = new String(TakePhoto.localDFreg.substring(
+							0, 10));
+					String strTime = new String(
+							TakePhoto.localDFreg.substring(11));
+					strDate = strDate.replace(":", "-");
+					dateButton.setText(strDate);
+					timeButton.setText(strTime);
+
+				}
+			}
+		}
+
+	}
+
+	// TODO: Handle Pause, Stop, Resume etc - don't forget to close the database
+	// and turn on/off the GPS
 	@Override
 	public void onStop() { //
 		lm.removeUpdates(LocL);
 		myDbHelper.close();
 		super.onStop();
 	}
-	
+
 	@Override
-    protected void onResume() { // 
-      onRestart();
+	protected void onResume() { //
+		onRestart();
 
-//      myDbHelper.open();
-      lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,10, LocL);
-      myDbHelper.open();
-    }
-	
-    @Override
-    protected void onPause() { //
-      //myDbHelper.close();
-      super.onPause();
-    }
+		// myDbHelper.open();
+		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, LocL);
+		myDbHelper.open();
+	}
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
+	@Override
+	protected void onPause() { //
+		// myDbHelper.close();
+		super.onPause();
+	}
 
-//        myDbHelper.open();
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,10, LocL);
-        myDbHelper.open();
-      }
+	@Override
+	protected void onRestart() {
+		super.onRestart();
+
+		// myDbHelper.open();
+		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, LocL);
+		myDbHelper.open();
+	}
+
 };
