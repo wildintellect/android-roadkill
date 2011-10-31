@@ -5,6 +5,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:clickable="true"
-    android:apiKey="0HKHBj9Klo4rrBdmREr2P_C5hBvizDeyByLFsUw"
+    android:enabled="true"
+    android:apiKey="0HKHBj9Klo4pD1X_lAeP_DewYkfepEc2ZKlry5g"
 />
 
