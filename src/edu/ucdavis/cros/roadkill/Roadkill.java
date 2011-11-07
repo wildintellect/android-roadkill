@@ -278,16 +278,13 @@ public class Roadkill extends Activity {
 				public void onClick(DialogInterface dialog, int item) {
 					Log.i(TAG, items[item].toString());
 					switch (item) {
-					case 0:
-						// From Photo
+					case 0: // From Photo
 						LATITUDE = TakePhoto.strLatC;
 						LONGITUDE = TakePhoto.strLongC;
 						gh.setLocation();
 						break;
-					case 1:
-						// From GPS
+					case 1: // From GPS
 						// Check to see if GPS is enabled
-
 						if (!gh.isEnabled()) {
 							gh.promptEnable();
 							break;
@@ -297,8 +294,7 @@ public class Roadkill extends Activity {
 							gh.setLocation();
 						}
 						break;
-					case 2:
-						// FROM Map
+					case 2: // from Map
 						LATITUDE = "38.6";
 						LONGITUDE = "-121.1";
 						// Intent locateIntent = new
@@ -309,11 +305,10 @@ public class Roadkill extends Activity {
 					}
 				}
 			});
-			AlertDialog gpsalert = builder.create();
-			return gpsalert;
+			AlertDialog gpsAlert = builder.create();
+			return gpsAlert;
 		}
 		}
-
 		return null;
 	}
 
@@ -328,23 +323,16 @@ public class Roadkill extends Activity {
 
 	private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
 
-		public void onDateSet(DatePicker view, int year, int monthOfYear,
-				int dayOfMonth) {
-			mYear = year;
-			mMonth = monthOfYear;
-			mDay = dayOfMonth;
-			DateTime.DupdateDisplay(mYear, mMonth, mDay, dateButton);
+		public void onDateSet(DatePicker view, int year, int month, int day) {
+			DateTime.DupdateDisplay(year, month, day, dateButton);
 		}
 	};
+
 	// the callback received when the user "sets" the time in the dialog
 	private TimePickerDialog.OnTimeSetListener mTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
-		// @Override
-		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-			mHour = hourOfDay;
-			mMinute = minute;
-			DateTime.TupdateDisplay(mHour, mMinute, timeButton);
+		public void onTimeSet(TimePicker view, int hour, int min) {
+			DateTime.TupdateDisplay(hour, min, timeButton);
 		}
-
 	};
 
 	// private GPSDialog extends AlertDialog{
