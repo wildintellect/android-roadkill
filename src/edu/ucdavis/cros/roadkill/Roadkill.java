@@ -71,7 +71,6 @@ public class Roadkill extends Activity {
 	private ImageButton helpButton;
 	private AutoCompleteTextView Species;
 	private Button saveButton;
-	public static final int PHOTO_BMP = 1;
 	public double phButt_h;
 	public double phButt_w;
 	public double bitmap_h;
@@ -100,7 +99,9 @@ public class Roadkill extends Activity {
 	LocationManager lm = null;
 	LocationListener LocL = null;
 
+	public static final int PHOTO_BMP = 1;
 	public static final int GPS_BMP = 2;
+	public static final int MAP_BMP = 3;
 	public static Button locationButton;
 	public static String LATITUDE = "0.0";
 	public static String LONGITUDE = "0.0";
@@ -116,6 +117,11 @@ public class Roadkill extends Activity {
 		c = Calendar.getInstance();
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		gh = new GPSHandler(lm, this);
+		LATITUDE = Double.toString(lm.getLastKnownLocation(
+				LocationManager.GPS_PROVIDER).getLatitude());
+		LONGITUDE = Double.toString(lm.getLastKnownLocation(
+				LocationManager.GPS_PROVIDER).getLatitude());
+
 		myDbHelper = new dbAdapter(this);
 		myDbHelper.open();
 
@@ -232,12 +238,14 @@ public class Roadkill extends Activity {
 			// loc.append(",");
 			// loc.append(LONGITUDE);
 			// loc.append("?z=10");
-			Intent locateIntent = new Intent(Roadkill.this, DataMap.class);
-			locateIntent.putExtra(DataMap.EXTRA_LATITUDE, LATITUDE);
-			locateIntent.putExtra(DataMap.EXTRA_LONGITUDE, LONGITUDE);
-			locateIntent.putExtra(DataMap.EXTRA_NAME, Species.getText()
-					.toString());
-			startActivity(locateIntent);
+			Intent i = new Intent(Roadkill.this, MyMap.class);
+			i.putExtra(DataMap.EXTRA_LATITUDE, LATITUDE);
+			i.putExtra(DataMap.EXTRA_LONGITUDE, LONGITUDE);
+			startActivity(i);
+
+			// locateIntent.putExtra(DataMap.EXTRA_NAME, Species.getText()
+			// .toString());
+
 			// Intent datamap = new
 			// Intent(android.content.Intent.ACTION_VIEW,Uri.parse(loc.toString()));
 			// startActivity(datamap);
@@ -295,12 +303,16 @@ public class Roadkill extends Activity {
 						}
 						break;
 					case 2: // from Map
-						LATITUDE = "38.6";
-						LONGITUDE = "-121.1";
+						Intent i = new Intent(Roadkill.this, MyMap.class);
+						i.putExtra(DataMap.EXTRA_LATITUDE, LATITUDE);
+						i.putExtra(DataMap.EXTRA_LONGITUDE, LONGITUDE);
+						startActivityForResult(i, MAP_BMP);
+						//LATITUDE = "38.6";
+						//LONGITUDE = "-121.1";
 						// Intent locateIntent = new
 						// Intent(roadkill.this,DataMap.class);
 						// startActivityForResult(locateIntent,PHOTO_BMP);
-						gh.setLocation();
+						//gh.setLocation();
 						break;
 					}
 				}
@@ -344,17 +356,24 @@ public class Roadkill extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// return from GPS settings
 		if (requestCode == GPS_BMP) {
-			// check to see if GPS has been enabled
-			if (!gh.isEnabled()) {
-				Toast.makeText(getApplicationContext(),
-						"GPS has not been enabled.", Toast.LENGTH_LONG).show();
-			} else {
-				// GPS is enabled
-				gh.getLocation();
-				gh.setLocation();
+			if (resultCode == RESULT_OK) {
+				// check to see if GPS has been enabled
+				if (!gh.isEnabled()) {
+					Toast.makeText(getApplicationContext(),
+							"GPS has not been enabled.", Toast.LENGTH_LONG)
+							.show();
+				} else {
+					// GPS is enabled
+					gh.getLocation();
+					gh.setLocation();
+				}
 			}
 		}
-
+		if (requestCode == MAP_BMP) {
+	
+				gh.setLocation();
+			
+		}
 		// return the photo to the button as a thumbnail
 		if (requestCode == PHOTO_BMP) {
 			if (resultCode == RESULT_OK) {
@@ -452,7 +471,8 @@ public class Roadkill extends Activity {
 					break;
 				}
 
-				// return the exif data in the photo for date, time and location
+				// return the exif data in the photo for date, time and
+				// location
 				if (TakePhoto.strLatC != null) {
 					String strLatLong = new String(TakePhoto.strLatC + ","
 							+ TakePhoto.strLongC);
