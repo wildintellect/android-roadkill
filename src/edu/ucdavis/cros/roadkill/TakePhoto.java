@@ -89,7 +89,7 @@ public class TakePhoto extends Activity {
     	
 //    	_path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "CROSPic.jpg";
     	Log.i("TakePhoto", "startCameraActivity()" );
-    	File file = new File( roadkill._path );
+    	File file = new File( Roadkill._path );
     	Uri outputFileUri = Uri.fromFile( file );
     	// Start intent that will open the camera
     	Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE );
@@ -133,7 +133,7 @@ public class TakePhoto extends Activity {
     	
     	
     	try {
-    		File picFile = new File( roadkill._path );
+    		File picFile = new File( Roadkill._path );
     		exif = new ExifInterface(picFile.getCanonicalPath());
     		
     	} catch (Exception e) {

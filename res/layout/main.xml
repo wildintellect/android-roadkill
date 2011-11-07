@@ -15,7 +15,15 @@
 				android:layout_width="fill_parent"
 				android:layout_height="fill_parent"
 				android:orientation="vertical">
-				<Button android:layout_width="fill_parent" android:layout_weight="1" android:text="Take Photo" android:layout_height="wrap_content" android:id="@+id/button"></Button>
+
+				<Button
+				    android:id="@+id/button"
+				    android:layout_width="fill_parent"
+				    android:layout_height="wrap_content"
+				    android:layout_weight="1"
+				    android:text="Take Photo" >
+				</Button>
+
 				<TextView
 					android:id="@+id/username"
 					android:layout_width="fill_parent"

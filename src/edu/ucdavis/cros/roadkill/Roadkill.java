@@ -61,20 +61,18 @@ import android.widget.RatingBar;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-public class roadkill extends Activity {
+public class Roadkill extends Activity {
 	// Debug log tag id
 	private static final String TAG = "RoadKill";
 	// Declare Variables
 	public ImageButton photoButton;
 	public static String _path;
-	private Button locationButton;
 	private Button dateButton;
 	private Button timeButton;
 	private ImageButton helpButton;
 	private AutoCompleteTextView Species;
 	private Button saveButton;
 	public static final int PHOTO_BMP = 1;
-	public static final int GPS_BMP = 2;
 	public double phButt_h;
 	public double phButt_w;
 	public double bitmap_h;
@@ -95,15 +93,20 @@ public class roadkill extends Activity {
 	private int mHour;
 	private int mMinute;
 	static final int TIME_DIALOG_ID = 2;
-	private String lat = "38.5";
-	private String lon = "-121.5";
+
 	static final int LOCATION_DIALOG_ID = 3;
 	private StringBuffer timestamp;
 	private RatingBar ratingBar;
 	// private float rating;
 	LocationManager lm = null;
 	LocationListener LocL = null;
-
+	
+	public static final int GPS_BMP = 2;
+	public static Button locationButton;
+	public static String LATITUDE = "0.0";
+	public static String LONGITUDE = "0.0";
+	GPSHandler gh;
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -134,12 +137,14 @@ public class roadkill extends Activity {
 		// Turn on GPS at application start/resume for better/faster fix
 		// Turn on GPS at application start/resume for better/faster fix
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		gh = new GPSHandler(lm, this);
+		/*
 		if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			Intent gpsIntent = new Intent(
 					Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 			startActivity(gpsIntent);
 		}
-
+		 */
 		LocL = new LocationListener() {
 
 			public void onLocationChanged(Location location) {
@@ -178,7 +183,7 @@ public class roadkill extends Activity {
 						+ "CROSPic.jpg";
 
 				// Start TakePhoto Activity
-				Intent photoIntent = new Intent(roadkill.this, TakePhoto.class);
+				Intent photoIntent = new Intent(Roadkill.this, TakePhoto.class);
 				startActivityForResult(photoIntent, PHOTO_BMP);
 
 			}
@@ -254,12 +259,16 @@ public class roadkill extends Activity {
 				String photopath = new String("");
 				// TODO: get real photo path, lat/lon from GPS, implement saving
 				// rating
-				myDbHelper.save(Species.getText().toString(), lat, lon,
+				myDbHelper.save(Species.getText().toString(), LATITUDE, LONGITUDE,
 						timestamp.toString(), _path, ratingBar.getRating());
 				Log.i(TAG, "Saved Record");
 			}
 		});
 
+	}
+	
+	public Context getInstance() {
+		return getApplicationContext();
 	}
 
 	private void splist() {
@@ -317,13 +326,13 @@ public class roadkill extends Activity {
 			// TODO: replace Intent with Map Activity that shows the data
 			// StringBuffer loc = new StringBuffer();
 			// loc.append("geo:");
-			// loc.append(lat);
+			// loc.append(LATITUDE);
 			// loc.append(",");
-			// loc.append(lon);
+			// loc.append(LONGITUDE);
 			// loc.append("?z=10");
-			Intent locateIntent = new Intent(roadkill.this, DataMap.class);
-			locateIntent.putExtra(DataMap.EXTRA_LATITUDE, lat);
-			locateIntent.putExtra(DataMap.EXTRA_LONGITUDE, lon);
+			Intent locateIntent = new Intent(Roadkill.this, DataMap.class);
+			locateIntent.putExtra(DataMap.EXTRA_LATITUDE, LATITUDE);
+			locateIntent.putExtra(DataMap.EXTRA_LONGITUDE, LONGITUDE);
 			locateIntent.putExtra(DataMap.EXTRA_NAME, Species.getText()
 					.toString());
 			startActivity(locateIntent);
@@ -332,7 +341,7 @@ public class roadkill extends Activity {
 			// startActivity(datamap);
 			return true;
 		case R.id.op_list:
-			Intent dataIntent = new Intent(roadkill.this, DataList.class);
+			Intent dataIntent = new Intent(Roadkill.this, DataList.class);
 			startActivity(dataIntent);
 			return true;
 		default:
@@ -364,73 +373,31 @@ public class roadkill extends Activity {
 					switch (item) {
 					case 0:
 						// From Photo
-						lat = TakePhoto.strLatC;
-						lon = TakePhoto.strLongC;
-						LocationSet();
+						LATITUDE = TakePhoto.strLatC;
+						LONGITUDE = TakePhoto.strLongC;
+						gh.setLocation();
 						break;
 					case 1:
 						// From GPS
 						// Check to see if GPS is enabled
 
-						if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-
-							// if GPS is not enabled, prompt user to enable GPS
-							AlertDialog.Builder alert = new AlertDialog.Builder(
-									roadkill.this);
-							alert.setTitle("GPS not enabled");
-							alert.setMessage("Would you like to enable GPS?");
-
-							// is user chooses yes, open up GPS settings
-							alert.setPositiveButton("Yes",
-									new DialogInterface.OnClickListener() {
-										public void onClick(
-												DialogInterface dialog,
-												int whichButton) {
-											Intent i = new Intent(
-													Settings.ACTION_SECURITY_SETTINGS);
-											startActivityForResult(i, GPS_BMP);
-										}
-									});
-
-							// if user chooses no, show a warning message
-							alert.setNegativeButton("No",
-									new DialogInterface.OnClickListener() {
-										public void onClick(
-												DialogInterface dialog,
-												int whichButton) {
-											Toast.makeText(
-													getApplicationContext(),
-													"Cannot retrieve location because GPS is not enabled.",
-													Toast.LENGTH_LONG).show();
-										}
-									});
-							alert.show();
+						if (!gh.isEnabled()) {
+							gh.promptEnable();
 							break;
 						} else {
 							// GPS is already enabled
-							try {
-								Location location = lm
-										.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-								lat = String.format("%f",
-										location.getLatitude());
-								lon = String.format("%f",
-										location.getLongitude());
-								Toast.makeText(getApplicationContext(),
-										"Location set to " + lat + ", " + lon,
-										Toast.LENGTH_LONG).show();
-								LocationSet();
-							} catch (Exception except) {
-							}
+							gh.getLocation();
+							gh.setLocation();
 						}
 						break;
 					case 2:
 						// FROM Map
-						lat = "38.6";
-						lon = "-121.1";
+						LATITUDE = "38.6";
+						LONGITUDE = "-121.1";
 						// Intent locateIntent = new
 						// Intent(roadkill.this,DataMap.class);
 						// startActivityForResult(locateIntent,PHOTO_BMP);
-						LocationSet();
+						gh.setLocation();
 						break;
 					}
 				}
@@ -441,14 +408,6 @@ public class roadkill extends Activity {
 		}
 
 		return null;
-	}
-
-	private void LocationSet() {
-		StringBuffer loc = new StringBuffer();
-		loc.append(lat);
-		loc.append(",");
-		loc.append(lon);
-		locationButton.setText(loc.toString());
 	}
 
 	protected void onPrepareDialog(int id, Dialog dialog) {
@@ -488,27 +447,16 @@ public class roadkill extends Activity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// super.onActivityResult(requestCode, resultCode, extras);
-
-		// return from changing GPS settings
+		// return from GPS settings
 		if (requestCode == GPS_BMP) {
 			// check to see if GPS has been enabled
-			if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			if (!gh.isEnabled()) {
 				Toast.makeText(getApplicationContext(),
 						"GPS has not been enabled.", Toast.LENGTH_LONG).show();
 			} else {
 				// GPS is enabled
-				try {
-					Location location = lm
-							.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-					lat = String.format("%f", location.getLatitude());
-					lon = String.format("%f", location.getLongitude());
-					Toast.makeText(getApplicationContext(),
-							"Location set to " + lat + ", " + lon,
-							Toast.LENGTH_LONG).show();
-					LocationSet();
-				} catch (Exception except) {
-				}
+				gh.getLocation();
+				gh.setLocation();
 			}
 		}
 
