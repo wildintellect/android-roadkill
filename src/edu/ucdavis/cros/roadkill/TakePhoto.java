@@ -40,7 +40,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.os.Bundle;
 
-
 public class TakePhoto extends Activity {
 
 	protected boolean _taken;
@@ -79,10 +78,6 @@ public class TakePhoto extends Activity {
     
     protected static final String PHOTO_TAKEN	= "photo_taken";
     
-
-//	public void startCameraActivity()
-//    {
-    
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
     	
@@ -91,6 +86,7 @@ public class TakePhoto extends Activity {
     	Log.i("TakePhoto", "startCameraActivity()" );
     	File file = new File( Roadkill._path );
     	Uri outputFileUri = Uri.fromFile( file );
+    	
     	// Start intent that will open the camera
     	Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE );
     	intent.putExtra( MediaStore.EXTRA_OUTPUT, outputFileUri );
@@ -209,10 +205,10 @@ public class TakePhoto extends Activity {
 	    	
 
 		}
-
     	
     	return _taken;
     }
+	
     public Float convertToDegree(String stringDMS){
    	 Float result = null;
    	 String[] DMS = stringDMS.split(",", 3);
@@ -235,7 +231,6 @@ public class TakePhoto extends Activity {
    	 result = new Float(FloatD + (FloatM/60) + (FloatS/3600));
    	  
    	 return result;
-
-
    	};
+   	
 }

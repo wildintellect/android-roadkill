@@ -45,7 +45,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -100,13 +99,13 @@ public class Roadkill extends Activity {
 	// private float rating;
 	LocationManager lm = null;
 	LocationListener LocL = null;
-	
+
 	public static final int GPS_BMP = 2;
 	public static Button locationButton;
 	public static String LATITUDE = "0.0";
 	public static String LONGITUDE = "0.0";
 	GPSHandler gh;
-	
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -139,11 +138,9 @@ public class Roadkill extends Activity {
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		gh = new GPSHandler(lm, this);
 		/*
-		if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-			Intent gpsIntent = new Intent(
-					Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-			startActivity(gpsIntent);
-		}
+		 * if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) { Intent
+		 * gpsIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+		 * startActivity(gpsIntent); }
 		 */
 		LocL = new LocationListener() {
 
@@ -238,10 +235,10 @@ public class Roadkill extends Activity {
 		});
 
 		this.helpButton.setOnClickListener(new OnClickListener() {
-			// @Override
+			@Override
 			public void onClick(View v) {
 				Log.i(TAG, "ratingHelp.onClick()");
-
+				showHelp();
 			}
 		});
 
@@ -259,14 +256,15 @@ public class Roadkill extends Activity {
 				String photopath = new String("");
 				// TODO: get real photo path, lat/lon from GPS, implement saving
 				// rating
-				myDbHelper.save(Species.getText().toString(), LATITUDE, LONGITUDE,
-						timestamp.toString(), _path, ratingBar.getRating());
+				myDbHelper.save(Species.getText().toString(), LATITUDE,
+						LONGITUDE, timestamp.toString(), _path,
+						ratingBar.getRating());
 				Log.i(TAG, "Saved Record");
 			}
 		});
 
 	}
-	
+
 	public Context getInstance() {
 		return getApplicationContext();
 	}
@@ -579,6 +577,24 @@ public class Roadkill extends Activity {
 			}
 		}
 
+	}
+
+	// display alert that explains the rating
+	public void showHelp() {
+		AlertDialog.Builder help = new AlertDialog.Builder(this);
+		help.setTitle("Confidence Level");
+		help.setMessage("Please indicate your level of confidence in identifying the species:"
+				+ "\n"
+				+ "1 star - Not Confident"
+				+ "\n"
+				+ "2 star - Somewhat Confident"
+				+ "\n"
+				+ "3 star - Very Confident");
+		help.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+			}
+		});
+		help.show();
 	}
 
 	// TODO: Handle Pause, Stop, Resume etc - don't forget to close the database
