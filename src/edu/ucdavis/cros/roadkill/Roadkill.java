@@ -104,7 +104,8 @@ public class Roadkill extends Activity {
 	public static Button locationButton;
 	public static String LATITUDE = "0.0";
 	public static String LONGITUDE = "0.0";
-	GPSHandler gh;
+	private Calendar c;
+	private GPSHandler gh;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -112,6 +113,9 @@ public class Roadkill extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.alt);
 
+		c = Calendar.getInstance();
+		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		gh = new GPSHandler(lm, this);
 		myDbHelper = new dbAdapter(this);
 		myDbHelper.open();
 
@@ -133,94 +137,27 @@ public class Roadkill extends Activity {
 		splist();
 		timestamp = new StringBuffer();
 
-		// Turn on GPS at application start/resume for better/faster fix
-		// Turn on GPS at application start/resume for better/faster fix
-		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		gh = new GPSHandler(lm, this);
-		/*
-		 * if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) { Intent
-		 * gpsIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-		 * startActivity(gpsIntent); }
-		 */
+		// update changes to GPS status
 		LocL = new LocationListener() {
-
 			public void onLocationChanged(Location location) {
-				// TODO Auto-generated method stub
+				gh.getLocation();
 			}
 
 			public void onProviderDisabled(String arg0) {
-				// TODO Auto-generated method stub
-
+				// Toast.makeText(getApplicationContext(),
+				// "GPS is currently off.", Toast.LENGTH_SHORT).show();
 			}
 
 			public void onProviderEnabled(String arg0) {
-				// TODO Auto-generated method stub
-				Log.i(TAG, "GPS Enabled");
-
+				// Toast.makeText(getApplicationContext(), "GPS is now on.",
+				// Toast.LENGTH_SHORT).show();
 			}
 
 			public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
 				// TODO Auto-generated method stub
-
 			}
-
 		};
 		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, LocL);
-
-		// Set up listeners for each button
-		this.photoButton.setOnClickListener(new OnClickListener() {
-			// @Override
-			public void onClick(View v) {
-				// Call the code to take the picture
-				Log.i(TAG, "photoButton.onClick()");
-
-				// set path for photo to be saved in db
-				_path = Environment
-						.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-						+ "CROSPic.jpg";
-
-				// Start TakePhoto Activity
-				Intent photoIntent = new Intent(Roadkill.this, TakePhoto.class);
-				startActivityForResult(photoIntent, PHOTO_BMP);
-
-			}
-		});
-		this.locationButton.setOnClickListener(new OnClickListener() {
-			// @Override
-			public void onClick(View v) {
-				Log.i(TAG, "locationButton.onClick()");
-				// open a selection window,
-				// ask the user if they want the GPS fix
-				// or adjust manually on a map
-				showDialog(LOCATION_DIALOG_ID);
-			}
-		});
-		this.dateButton.setOnClickListener(new OnClickListener() {
-			// @Override
-			public void onClick(View v) {
-				// open a popup with a date/time selector widget
-				Log.i(TAG, "dateButton.onClick()");
-				showDialog(DATE_DIALOG_ID);
-			}
-		});
-		// Setup the current date/time for the dialog
-		final Calendar c = Calendar.getInstance();
-		mYear = c.get(Calendar.YEAR);
-		mMonth = c.get(Calendar.MONTH);
-		mDay = c.get(Calendar.DAY_OF_MONTH);
-		// Enable the next line only if you want set the data immediately
-		// updateDisplay();
-		this.timeButton.setOnClickListener(new OnClickListener() {
-			// @Override
-			public void onClick(View v) {
-				// open a popup with a date/time selector widget
-				Log.i(TAG, "dateButton.onClick()");
-				showDialog(TIME_DIALOG_ID);
-			}
-		});
-		// get the current time
-		mHour = c.get(Calendar.HOUR_OF_DAY);
-		mMinute = c.get(Calendar.MINUTE);
 
 		this.Species.setOnClickListener(new OnClickListener() {
 			// @Override
@@ -234,39 +171,6 @@ public class Roadkill extends Activity {
 			}
 		});
 
-		this.helpButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Log.i(TAG, "ratingHelp.onClick()");
-				showHelp();
-			}
-		});
-
-		this.saveButton.setOnClickListener(new OnClickListener() {
-			// @Override
-			public void onClick(View v) {
-				// save data to record, if existing record update information
-				Log.i(TAG, "saveButton.onClick()");
-				Species.performValidation();
-				if (timestamp.length() < 1) {
-					timestamp.append(dateButton.getText());
-					timestamp.append("T");
-					timestamp.append(timeButton.getText());
-				}
-				String photopath = new String("");
-				// TODO: get real photo path, lat/lon from GPS, implement saving
-				// rating
-				myDbHelper.save(Species.getText().toString(), LATITUDE,
-						LONGITUDE, timestamp.toString(), _path,
-						ratingBar.getRating());
-				Log.i(TAG, "Saved Record");
-			}
-		});
-
-	}
-
-	public Context getInstance() {
-		return getApplicationContext();
 	}
 
 	private void splist() {
@@ -353,10 +257,15 @@ public class Roadkill extends Activity {
 		switch (id) {
 
 		case DATE_DIALOG_ID:
+			mYear = c.get(Calendar.YEAR);
+			mMonth = c.get(Calendar.MONTH);
+			mDay = c.get(Calendar.DAY_OF_MONTH);
 			return new DatePickerDialog(this, mDateSetListener, mYear, mMonth,
 					mDay);
 
 		case TIME_DIALOG_ID:
+			mHour = c.get(Calendar.HOUR_OF_DAY);
+			mMinute = c.get(Calendar.MINUTE);
 			return new TimePickerDialog(this, mTimeSetListener, mHour, mMinute,
 					false);
 
@@ -595,6 +504,65 @@ public class Roadkill extends Activity {
 			}
 		});
 		help.show();
+	}
+
+	public void onClick(View v) {
+		switch (v.getId()) {
+
+		case R.id.buttonHelp:
+			Log.i(TAG, "ratingHelp.onClick()");
+			showHelp();
+			break;
+
+		case R.id.photoButton:
+			// Call the code to take the picture
+			Log.i(TAG, "photoButton.onClick()");
+
+			// set path for photo to be saved in db
+			_path = Environment
+					.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+					+ "CROSPic.jpg";
+
+			// Start TakePhoto Activity
+			Intent photoIntent = new Intent(Roadkill.this, TakePhoto.class);
+			startActivityForResult(photoIntent, PHOTO_BMP);
+			break;
+
+		case R.id.dateButton:
+			// open a pop-up with a date/time selector widget
+			Log.i(TAG, "dateButton.onClick()");
+			showDialog(DATE_DIALOG_ID);
+			break;
+
+		case R.id.timeButton:
+			// open a pop-up with a date/time selector widget
+			Log.i(TAG, "dateButton.onClick()");
+			showDialog(TIME_DIALOG_ID);
+			break;
+
+		case R.id.locationButton:
+			Log.i(TAG, "locationButton.onClick()");
+			// open a selection window for photo, GPS, or map location
+			showDialog(LOCATION_DIALOG_ID);
+			break;
+
+		case R.id.saveButton:
+			// save data to record, if existing record update information
+			Log.i(TAG, "saveButton.onClick()");
+			Species.performValidation();
+			if (timestamp.length() < 1) {
+				timestamp.append(dateButton.getText());
+				timestamp.append("T");
+				timestamp.append(timeButton.getText());
+			}
+			String photopath = new String("");
+			// TODO: get real photo path, lat/lon from GPS, implement saving
+			// rating
+			myDbHelper.save(Species.getText().toString(), LATITUDE, LONGITUDE,
+					timestamp.toString(), _path, ratingBar.getRating());
+			Log.i(TAG, "Saved Record");
+			break;
+		}
 	}
 
 	// TODO: Handle Pause, Stop, Resume etc - don't forget to close the database
