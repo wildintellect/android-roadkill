@@ -117,21 +117,9 @@ public class Roadkill extends Activity {
 		c = Calendar.getInstance();
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		gh = new GPSHandler(lm, this);
-		// LATITUDE =
-		// Double.toString(lm.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude());
-		// LONGITUDE =
-		// Double.toString(lm.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude());
 
 		myDbHelper = new dbAdapter(this);
 		myDbHelper.open();
-
-		// DataBaseHelper myDbHelper = new DataBaseHelper();
-		// myDbHelper = new DataBaseHelper(this);
-
-		// try { myDbHelper.createDataBase();
-		// } catch (IOException ioe) {
-		// throw new Error("Unable to create database");
-		// }
 
 		this.photoButton = (ImageButton) findViewById(R.id.photoButton);
 		this.locationButton = (Button) findViewById(R.id.locationButton);
@@ -207,17 +195,15 @@ public class Roadkill extends Activity {
 		this.Species.setAdapter(adapter);
 	}
 
+	// create Options Menu
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Triggered from the device menu button
-		// Allows user to reach other views and configure the application
-		// TODO : implement opening views based on button picked, with onClick
-		// property in menu.xml
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.view_menu, menu);
 		return true;
 	}
 
+	// Option is selected
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// handles the pop up menu
@@ -230,10 +216,10 @@ public class Roadkill extends Activity {
 			return true;
 		case R.id.op_map:
 			Log.i(TAG, "Map clicked");
-			Intent i = new Intent(Roadkill.this, MapData.class);
-			i.putExtra(DataMap.EXTRA_LATITUDE, LATITUDE);
-			i.putExtra(DataMap.EXTRA_LONGITUDE, LONGITUDE);
-			startActivity(i);
+			Intent mapIntent = new Intent(Roadkill.this, MapData.class);
+			mapIntent.putExtra(MapData.EXTRA_LATITUDE, LATITUDE);
+			mapIntent.putExtra(MapData.EXTRA_LONGITUDE, LONGITUDE);
+			startActivity(mapIntent);
 			return true;
 		case R.id.op_list:
 			Intent dataIntent = new Intent(Roadkill.this, DataList.class);
@@ -242,26 +228,23 @@ public class Roadkill extends Activity {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
-
 	}
 
+	// create dialogs
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
-
 		case DATE_DIALOG_ID:
 			mYear = c.get(Calendar.YEAR);
 			mMonth = c.get(Calendar.MONTH);
 			mDay = c.get(Calendar.DAY_OF_MONTH);
 			return new DatePickerDialog(this, mDateSetListener, mYear, mMonth,
 					mDay);
-
 		case TIME_DIALOG_ID:
 			mHour = c.get(Calendar.HOUR_OF_DAY);
 			mMinute = c.get(Calendar.MINUTE);
 			return new TimePickerDialog(this, mTimeSetListener, mHour, mMinute,
 					false);
-
 		case LOCATION_DIALOG_ID: {
 			final CharSequence[] items = { "From Photo Data", "From GPS",
 					"From Map" };
@@ -289,15 +272,9 @@ public class Roadkill extends Activity {
 						break;
 					case 2: // from Map
 						Intent i = new Intent(Roadkill.this, MapChoose.class);
-						i.putExtra(DataMap.EXTRA_LATITUDE, LATITUDE);
-						i.putExtra(DataMap.EXTRA_LONGITUDE, LONGITUDE);
+						i.putExtra(MapChoose.EXTRA_LATITUDE, LATITUDE);
+						i.putExtra(MapChoose.EXTRA_LONGITUDE, LONGITUDE);
 						startActivityForResult(i, MAP_BMP);
-						// LATITUDE = "38.6";
-						// LONGITUDE = "-121.1";
-						// Intent locateIntent = new
-						// Intent(roadkill.this,DataMap.class);
-						// startActivityForResult(locateIntent,PHOTO_BMP);
-						// gh.setLocation();
 						break;
 					}
 				}
@@ -311,32 +288,27 @@ public class Roadkill extends Activity {
 
 	protected void onPrepareDialog(int id, Dialog dialog) {
 		switch (id) {
-
 		case DATE_DIALOG_ID:
 			((DatePickerDialog) dialog).updateDate(mYear, mMonth, mDay);
 			break;
 		}
 	}
 
+	// the callback received when the user "sets" the date in the date dialog
 	private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
-
 		public void onDateSet(DatePicker view, int year, int month, int day) {
 			DateTime.DupdateDisplay(year, month, day, dateButton);
 		}
 	};
 
-	// the callback received when the user "sets" the time in the dialog
+	// the callback received when the user "sets" the time in the time dialog
 	private TimePickerDialog.OnTimeSetListener mTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
 		public void onTimeSet(TimePicker view, int hour, int min) {
 			DateTime.TupdateDisplay(hour, min, timeButton);
 		}
 	};
-
-	// private GPSDialog extends AlertDialog{
-	// TODO: Implement AlertDialog as it's own function/class, work ok as is for
-	// now.
-	// };
-
+	
+	// actions taken from return from child activities
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// return from GPS settings
@@ -480,34 +452,15 @@ public class Roadkill extends Activity {
 			}
 		}
 
-	}
+	}	
 
-	// display alert that explains the rating
-	public void showHelp() {
-		AlertDialog.Builder help = new AlertDialog.Builder(this);
-		help.setTitle("Confidence Level");
-		help.setMessage("Please indicate your level of confidence in identifying the species:"
-				+ "\n"
-				+ "1 star - Not Confident"
-				+ "\n"
-				+ "2 star - Somewhat Confident"
-				+ "\n"
-				+ "3 star - Very Confident");
-		help.setNegativeButton("Close", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-			}
-		});
-		help.show();
-	}
-
+	// action taken from clicking a button
 	public void onClick(View v) {
 		switch (v.getId()) {
-
 		case R.id.buttonHelp:
 			Log.i(TAG, "ratingHelp.onClick()");
 			showHelp();
 			break;
-
 		case R.id.photoButton:
 			// Call the code to take the picture
 			Log.i(TAG, "photoButton.onClick()");
@@ -521,25 +474,21 @@ public class Roadkill extends Activity {
 			Intent photoIntent = new Intent(Roadkill.this, TakePhoto.class);
 			startActivityForResult(photoIntent, PHOTO_BMP);
 			break;
-
 		case R.id.dateButton:
 			// open a pop-up with a date/time selector widget
 			Log.i(TAG, "dateButton.onClick()");
 			showDialog(DATE_DIALOG_ID);
 			break;
-
 		case R.id.timeButton:
 			// open a pop-up with a date/time selector widget
 			Log.i(TAG, "dateButton.onClick()");
 			showDialog(TIME_DIALOG_ID);
 			break;
-
 		case R.id.locationButton:
 			Log.i(TAG, "locationButton.onClick()");
 			// open a selection window for photo, GPS, or map location
 			showDialog(LOCATION_DIALOG_ID);
 			break;
-
 		case R.id.saveButton:
 			// save data to record, if existing record update information
 			Log.i(TAG, "saveButton.onClick()");
@@ -558,9 +507,25 @@ public class Roadkill extends Activity {
 			break;
 		}
 	}
+	
+	// display alert that explains the rating
+	public void showHelp() {
+		AlertDialog.Builder help = new AlertDialog.Builder(this);
+		help.setTitle("Confidence Level");
+		help.setMessage("Please indicate your level of confidence in identifying the species:"
+				+ "\n"
+				+ "1 star - Not Confident"
+				+ "\n"
+				+ "2 star - Somewhat Confident"
+				+ "\n"
+				+ "3 star - Very Confident");
+		help.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+			}
+		});
+		help.show();
+	}
 
-	// TODO: Handle Pause, Stop, Resume etc - don't forget to close the database
-	// and turn on/off the GPS
 	@Override
 	public void onStop() { //
 		lm.removeUpdates(LocL);
@@ -571,7 +536,6 @@ public class Roadkill extends Activity {
 	@Override
 	protected void onResume() { //
 		onRestart();
-
 		// myDbHelper.open();
 		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, LocL);
 		myDbHelper.open();

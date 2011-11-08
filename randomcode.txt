@@ -1,0 +1,18 @@
+
+		
+		
+		// LATITUDE =
+		// Double.toString(lm.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude());
+		// LONGITUDE =
+		// Double.toString(lm.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude());
+		
+		
+		
+		
+		// DataBaseHelper myDbHelper = new DataBaseHelper();
+		// myDbHelper = new DataBaseHelper(this);
+
+		// try { myDbHelper.createDataBase();
+		// } catch (IOException ioe) {
+		// throw new Error("Unable to create database");
+		// }
