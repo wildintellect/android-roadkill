@@ -78,7 +78,7 @@ public class CopyOfOverlays extends ItemizedOverlay<OverlayItem> {
 			for (OverlayItem item : mOverlays) {
 				Point p = new Point(0, 0);
 
-				((CopyOfMapChoose) myContext).mapView.getProjection().toPixels(
+				((MapData) myContext).mapView.getProjection().toPixels(
 						item.getPoint(), p);
 
 				if (hitTest(item, marker, x - p.x, y - p.y)) {
@@ -105,7 +105,7 @@ public class CopyOfOverlays extends ItemizedOverlay<OverlayItem> {
 		} else if (action == MotionEvent.ACTION_UP && inDrag != null) {
 			dragImage.setVisibility(View.GONE);
 
-			GeoPoint pt = ((CopyOfMapChoose) myContext).mapView.getProjection()
+			GeoPoint pt = ((MapData) myContext).mapView.getProjection()
 					.fromPixels(x - xDragTouchOffset, y - yDragTouchOffset);
 			OverlayItem toDrop = new OverlayItem(pt, inDrag.getTitle(),
 					inDrag.getSnippet());

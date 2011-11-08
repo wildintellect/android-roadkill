@@ -230,25 +230,10 @@ public class Roadkill extends Activity {
 			return true;
 		case R.id.op_map:
 			Log.i(TAG, "Map clicked");
-			// Intent datamap = new Intent(roadkill.this,Maps.class);
-			// TODO: replace Intent with Map Activity that shows the data
-			// StringBuffer loc = new StringBuffer();
-			// loc.append("geo:");
-			// loc.append(LATITUDE);
-			// loc.append(",");
-			// loc.append(LONGITUDE);
-			// loc.append("?z=10");
-			Intent i = new Intent(Roadkill.this, MapChoose.class);
+			Intent i = new Intent(Roadkill.this, MapData.class);
 			i.putExtra(DataMap.EXTRA_LATITUDE, LATITUDE);
 			i.putExtra(DataMap.EXTRA_LONGITUDE, LONGITUDE);
 			startActivity(i);
-
-			// locateIntent.putExtra(DataMap.EXTRA_NAME, Species.getText()
-			// .toString());
-
-			// Intent datamap = new
-			// Intent(android.content.Intent.ACTION_VIEW,Uri.parse(loc.toString()));
-			// startActivity(datamap);
 			return true;
 		case R.id.op_list:
 			Intent dataIntent = new Intent(Roadkill.this, DataList.class);

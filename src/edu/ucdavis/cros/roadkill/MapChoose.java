@@ -67,11 +67,11 @@ public class MapChoose extends MapActivity {
 		drawable = this.getResources().getDrawable(R.drawable.pin);
 		overlays = new Overlays(drawable);
 
-		// creates an overlay item at our starting center
+		// creates a pin at our starting center
 		GeoPoint point = getPoint(latitude, longitude);
 		OverlayItem pin = new OverlayItem(point, "California", "Davis");
 
-		// adds the overlay item to our list
+		// adds the pin to our list
 		overlays.addOverlay(pin);
 		mapOverlays.add(overlays);
 	}
