@@ -103,8 +103,8 @@ public class Roadkill extends Activity {
 	public static final int GPS_BMP = 2;
 	public static final int MAP_BMP = 3;
 	public static Button locationButton;
-	public static String LATITUDE = "0.0";
-	public static String LONGITUDE = "0.0";
+	public static String LATITUDE = "38.6"; // default set to Davis, CA
+	public static String LONGITUDE = "-121.1";
 	private Calendar c;
 	private GPSHandler gh;
 
@@ -117,10 +117,10 @@ public class Roadkill extends Activity {
 		c = Calendar.getInstance();
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		gh = new GPSHandler(lm, this);
-		LATITUDE = Double.toString(lm.getLastKnownLocation(
-				LocationManager.GPS_PROVIDER).getLatitude());
-		LONGITUDE = Double.toString(lm.getLastKnownLocation(
-				LocationManager.GPS_PROVIDER).getLatitude());
+		// LATITUDE =
+		// Double.toString(lm.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude());
+		// LONGITUDE =
+		// Double.toString(lm.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude());
 
 		myDbHelper = new dbAdapter(this);
 		myDbHelper.open();
@@ -238,7 +238,7 @@ public class Roadkill extends Activity {
 			// loc.append(",");
 			// loc.append(LONGITUDE);
 			// loc.append("?z=10");
-			Intent i = new Intent(Roadkill.this, MyMap.class);
+			Intent i = new Intent(Roadkill.this, MapChoose.class);
 			i.putExtra(DataMap.EXTRA_LATITUDE, LATITUDE);
 			i.putExtra(DataMap.EXTRA_LONGITUDE, LONGITUDE);
 			startActivity(i);
@@ -303,16 +303,16 @@ public class Roadkill extends Activity {
 						}
 						break;
 					case 2: // from Map
-						Intent i = new Intent(Roadkill.this, MyMap.class);
+						Intent i = new Intent(Roadkill.this, MapChoose.class);
 						i.putExtra(DataMap.EXTRA_LATITUDE, LATITUDE);
 						i.putExtra(DataMap.EXTRA_LONGITUDE, LONGITUDE);
 						startActivityForResult(i, MAP_BMP);
-						//LATITUDE = "38.6";
-						//LONGITUDE = "-121.1";
+						// LATITUDE = "38.6";
+						// LONGITUDE = "-121.1";
 						// Intent locateIntent = new
 						// Intent(roadkill.this,DataMap.class);
 						// startActivityForResult(locateIntent,PHOTO_BMP);
-						//gh.setLocation();
+						// gh.setLocation();
 						break;
 					}
 				}
@@ -369,10 +369,11 @@ public class Roadkill extends Activity {
 				}
 			}
 		}
+		// return from MapChoose
 		if (requestCode == MAP_BMP) {
-	
+			if (resultCode == RESULT_OK) {
 				gh.setLocation();
-			
+			}
 		}
 		// return the photo to the button as a thumbnail
 		if (requestCode == PHOTO_BMP) {

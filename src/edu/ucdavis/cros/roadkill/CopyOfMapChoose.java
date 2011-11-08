@@ -13,22 +13,22 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
-public class MyMap extends MapActivity {
+public class CopyOfMapChoose extends MapActivity {
 
 	public static final String EXTRA_LATITUDE = "edu.ucdavis.cros.roadkill.EXTRA_LATITUDE";
 	public static final String EXTRA_LONGITUDE = "edu.ucdavis.cros.roadkill.EXTRA_LONGITUDE";
 	public static final String EXTRA_NAME = "edu.ucdavis.cros.roadkill.EXTRA_NAME";
 
 	LinearLayout linearLayout;
-	MapView mapView;
+	public static MapView mapView;
 	List<Overlay> mapOverlays;
 	Drawable drawable;
-	Overlays overlays;
+	CopyOfOverlays overlays;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.mymap);
+		setContentView(R.layout.mapchoose);
 
 		double latitude = Double.parseDouble(getIntent().getStringExtra(
 				EXTRA_LATITUDE));
@@ -46,7 +46,7 @@ public class MyMap extends MapActivity {
 
 		mapOverlays = mapView.getOverlays();
 		drawable = this.getResources().getDrawable(android.R.drawable.star_on);
-		overlays = new Overlays(drawable, this);
+		overlays = new CopyOfOverlays(drawable, this);
 
 		// creates overlayitem
 		GeoPoint point = new GeoPoint((int) (38.6 * 1000000.0),
