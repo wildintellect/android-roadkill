@@ -40,14 +40,14 @@ public class SpCurAdapter extends CursorAdapter {
         @Override
         public void bindView(View view, Context context, Cursor cursor)
         {
-            int columnIndex = cursor.getColumnIndexOrThrow(dbAdapter.LOOKUP);
+            int columnIndex = cursor.getColumnIndexOrThrow(DbAdapter.LOOKUP);
             ((TextView) view).setText(cursor.getString(columnIndex));
         }
 
         @Override
         public String convertToString(Cursor cursor)
         {
-            int columnIndex = cursor.getColumnIndexOrThrow(dbAdapter.LOOKUP);
+            int columnIndex = cursor.getColumnIndexOrThrow(DbAdapter.LOOKUP);
             return cursor.getString(columnIndex);
         }
 
@@ -56,7 +56,7 @@ public class SpCurAdapter extends CursorAdapter {
         {
             final LayoutInflater inflater = LayoutInflater.from(context);
             final TextView view = (TextView) inflater.inflate(android.R.layout.simple_dropdown_item_1line, parent, false);
-            int columnIndex = cursor.getColumnIndexOrThrow(dbAdapter.LOOKUP);
+            int columnIndex = cursor.getColumnIndexOrThrow(DbAdapter.LOOKUP);
             view.setText(cursor.getString(columnIndex));
             return view;
         }

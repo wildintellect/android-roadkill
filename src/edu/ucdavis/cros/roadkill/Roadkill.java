@@ -81,8 +81,6 @@ public class Roadkill extends Activity {
 	public Bitmap resultBmp;
 	public Bitmap scaledBmp;
 
-	// Declare Database
-	private dbAdapter myDbHelper;
 	// private DataBaseHelper myDbHelper;
 	private int mYear;
 	private int mMonth;
@@ -106,7 +104,9 @@ public class Roadkill extends Activity {
 	public static String LATITUDE = "38.6"; // default set to Davis, CA
 	public static String LONGITUDE = "-121.1";
 	private Calendar c;
-	private GPSHandler gh;
+	private GPSHandler gh; // create GPSHandler
+	private myDbAdapter myDb; // create database
+	private String recordDate;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -118,8 +118,8 @@ public class Roadkill extends Activity {
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		gh = new GPSHandler(lm, this);
 
-		myDbHelper = new dbAdapter(this);
-		myDbHelper.open();
+		myDb = new myDbAdapter(this);
+		myDb.open();
 
 		this.photoButton = (ImageButton) findViewById(R.id.photoButton);
 		this.locationButton = (Button) findViewById(R.id.locationButton);
@@ -169,7 +169,7 @@ public class Roadkill extends Activity {
 
 	private void splist() {
 		// Set the species list from a database query
-		final ArrayList<String> spplist = myDbHelper.spplist();
+		final ArrayList<String> spplist = myDb.spplist();
 		// startManagingCursor(sppCursor);
 		// String[] from = new String[]{"common"};
 		// int[] to = new int[]{R.id.speciesTextView};
@@ -222,7 +222,7 @@ public class Roadkill extends Activity {
 			startActivity(mapIntent);
 			return true;
 		case R.id.op_list:
-			Intent dataIntent = new Intent(Roadkill.this, DataList.class);
+			Intent dataIntent = new Intent(Roadkill.this, ListData.class);
 			startActivity(dataIntent);
 			return true;
 		default:
@@ -297,6 +297,8 @@ public class Roadkill extends Activity {
 	// the callback received when the user "sets" the date in the date dialog
 	private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
 		public void onDateSet(DatePicker view, int year, int month, int day) {
+			recordDate = Integer.toString(month + 1) + "/"
+					+ Integer.toString(day) + "/" + Integer.toString(year);
 			DateTime.DupdateDisplay(year, month, day, dateButton);
 		}
 	};
@@ -307,7 +309,7 @@ public class Roadkill extends Activity {
 			DateTime.TupdateDisplay(hour, min, timeButton);
 		}
 	};
-	
+
 	// actions taken from return from child activities
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -452,7 +454,7 @@ public class Roadkill extends Activity {
 			}
 		}
 
-	}	
+	}
 
 	// action taken from clicking a button
 	public void onClick(View v) {
@@ -501,13 +503,13 @@ public class Roadkill extends Activity {
 			String photopath = new String("");
 			// TODO: get real photo path, lat/lon from GPS, implement saving
 			// rating
-			myDbHelper.save(Species.getText().toString(), LATITUDE, LONGITUDE,
+			myDb.save(Species.getText().toString(), LATITUDE, LONGITUDE,
 					timestamp.toString(), _path, ratingBar.getRating());
 			Log.i(TAG, "Saved Record");
 			break;
 		}
 	}
-	
+
 	// display alert that explains the rating
 	public void showHelp() {
 		AlertDialog.Builder help = new AlertDialog.Builder(this);
@@ -529,21 +531,21 @@ public class Roadkill extends Activity {
 	@Override
 	public void onStop() { //
 		lm.removeUpdates(LocL);
-		myDbHelper.close();
+		myDb.close();
 		super.onStop();
 	}
 
 	@Override
 	protected void onResume() { //
 		onRestart();
-		// myDbHelper.open();
+		// myDb.open();
 		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, LocL);
-		myDbHelper.open();
+		myDb.open();
 	}
 
 	@Override
 	protected void onPause() { //
-		// myDbHelper.close();
+		// myDb.close();
 		super.onPause();
 	}
 
@@ -551,9 +553,9 @@ public class Roadkill extends Activity {
 	protected void onRestart() {
 		super.onRestart();
 
-		// myDbHelper.open();
+		// myDb.open();
 		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, LocL);
-		myDbHelper.open();
+		myDb.open();
 	}
 
 };

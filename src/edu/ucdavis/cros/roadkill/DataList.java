@@ -23,7 +23,7 @@ import android.os.Bundle;
 import android.widget.SimpleCursorAdapter;
 
 public class DataList extends ListActivity{
-	private dbAdapter myDbHelper;
+	private DbAdapter myDbHelper;
 	private Cursor cursor;
 	
 	@Override
@@ -31,7 +31,7 @@ public class DataList extends ListActivity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.datalist);
 		this.getListView().setDividerHeight(2);
-		myDbHelper = new dbAdapter(this);
+		myDbHelper = new DbAdapter(this);
 		myDbHelper.open();
 		fillData();
 		registerForContextMenu(getListView());
@@ -41,7 +41,7 @@ public class DataList extends ListActivity{
 		cursor = myDbHelper.allrecords();
 		startManagingCursor(cursor);
 
-		String[] from = new String[] { dbAdapter.Record_Species,dbAdapter.Record_Time };
+		String[] from = new String[] { DbAdapter.Record_Species,DbAdapter.Record_Time };
 		int[] to = new int[] { R.id.label,R.id.timestamp };
 
 		// Now create an array adapter and set it to display using our row

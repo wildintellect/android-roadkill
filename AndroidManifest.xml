@@ -30,5 +30,6 @@
         <activity android:name=".DataList"></activity>
         <activity android:name=".MapChoose"></activity>
         <activity android:name=".MapData"></activity>
+        <activity android:name=".ListData"></activity>
     </application>
 </manifest>
