@@ -113,6 +113,10 @@ public class Roadkill extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.alt);
+		
+		//database test
+		MySqlHandler msh = new MySqlHandler();
+		msh.sendRecord();
 
 		c = Calendar.getInstance();
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
