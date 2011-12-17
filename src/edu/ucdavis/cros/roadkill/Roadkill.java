@@ -108,6 +108,7 @@ public class Roadkill extends Activity {
 	private myDbAdapter myDb; // create database
 	private String recordDate;
 
+	MySqlHandler msh;
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -115,8 +116,8 @@ public class Roadkill extends Activity {
 		setContentView(R.layout.alt);
 		
 		//database test
-		MySqlHandler msh = new MySqlHandler();
-		msh.sendRecord();
+		msh = new MySqlHandler();
+		//msh.sendRecord();
 
 		c = Calendar.getInstance();
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);

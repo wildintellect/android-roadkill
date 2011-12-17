@@ -23,22 +23,19 @@ package edu.ucdavis.cros.roadkill;
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.hardware.Camera;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
-import android.text.format.Time;
 import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.os.Bundle;
 
 public class TakePhoto extends Activity {
 

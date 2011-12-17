@@ -7,9 +7,7 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.Canvas;
 import android.graphics.Point;
-import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.MotionEvent;
