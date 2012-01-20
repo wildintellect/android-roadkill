@@ -109,15 +109,16 @@ public class Roadkill extends Activity {
 	private String recordDate;
 
 	MySqlHandler msh;
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.alt);
-		
-		//database test
-		msh = new MySqlHandler();
-		//msh.sendRecord();
+
+		// database test
+	//	msh = new MySqlHandler();
+		// msh.sendRecord();
 
 		c = Calendar.getInstance();
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -502,14 +503,15 @@ public class Roadkill extends Activity {
 			Species.performValidation();
 			if (timestamp.length() < 1) {
 				timestamp.append(dateButton.getText());
-				timestamp.append("T");
+				timestamp.append(" ");
 				timestamp.append(timeButton.getText());
 			}
 			String photopath = new String("");
 			// TODO: get real photo path, lat/lon from GPS, implement saving
 			// rating
-			myDb.save(Species.getText().toString(), LATITUDE, LONGITUDE,
-					timestamp.toString(), _path, ratingBar.getRating());
+			myDb.open();
+			myDb.save(Species.getText().toString(), LATITUDE, LONGITUDE, timestamp.toString(), _path, ratingBar.getRating());
+			myDb.close();
 			Log.i(TAG, "Saved Record");
 			break;
 		}

@@ -182,14 +182,15 @@ public class DbAdapter {
 				null, Record_Time + " DESC");
 	}
 
-	public long save(String species, String lat, String lon, String time,
+	public long save(String species, String lat, String lon, String date, String time,
 			String photopath, float rating) {
-		// Should this be a boolean so it will return true if it works?
+		
 		ContentValues initialValues = new ContentValues();
 		initialValues.put(Record_User, "me");
 		initialValues.put(Record_Species, species);
 		initialValues.put(Record_Lat, lat);
 		initialValues.put(Record_Lon, lon);
+		initialValues.put(Record_Date, date);
 		initialValues.put(Record_Time, time);
 		initialValues.put(Record_Upload, "0");
 		initialValues.put(Record_Photo, photopath);

@@ -64,7 +64,7 @@ public class myDbAdapter {
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
-			// db.execSQL(DATABASE_CREATE);
+		   // db.execSQL(DATABASE_CREATE);
 			// If database exists do nothing, else copy from assets
 		}
 
@@ -161,7 +161,14 @@ public class myDbAdapter {
 		return mDb.query(DATABASE_TABLE, new String[] { Key_ID, Record_User,
 				Record_Species, Record_Lat, Record_Lon, Record_Time,
 				Record_Upload, Record_Photo, Record_Rating }, null, null, null,
-				null, Record_Time + " DESC");
+				null, null);
+	}
+	
+	public Cursor select(String selection) {
+		return mDb.query(DATABASE_TABLE, new String[] { Key_ID, Record_User,
+				Record_Species, Record_Lat, Record_Lon, Record_Time,
+				Record_Upload, Record_Photo, Record_Rating }, Key_ID + "=" + selection, null, null,
+				null, null);
 	}
 
 	public long save(String species, String lat, String lon, String time,
@@ -171,7 +178,7 @@ public class myDbAdapter {
 		initialValues.put(Record_User, "me");
 		initialValues.put(Record_Species, species);
 		initialValues.put(Record_Lat, lat);
-		initialValues.put(Record_Lon, lon);
+		initialValues.put(Record_Lon, lon);;
 		initialValues.put(Record_Time, time);
 		initialValues.put(Record_Upload, "0");
 		initialValues.put(Record_Photo, photopath);
