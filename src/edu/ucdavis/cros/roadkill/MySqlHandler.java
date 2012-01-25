@@ -44,25 +44,23 @@ public class MySqlHandler {
 	HttpContext httpContext = new BasicHttpContext();
 
 	MySqlHandler() {
-		if(login()){
-			//sendRecord();
-		}
+
 	}
-	
-	boolean login() {
+
+	boolean login(String username, String password) {
 		boolean findLogin = false;
 		try {
-			//Log in
+			// Log in
 			post = new HttpPost("http://www.wildlifecrossing.net/california/");
 			userData.add(new BasicNameValuePair("form_id", "user_login_block"));
-			userData.add(new BasicNameValuePair("name", "whereisjoey"));
-			userData.add(new BasicNameValuePair("pass", "just4you"));
+			userData.add(new BasicNameValuePair("name", username));
+			userData.add(new BasicNameValuePair("pass", password));
 			post.setEntity(new UrlEncodedFormEntity(userData));
 			response = client.execute(post);
 			entity = response.getEntity();
 			is = entity.getContent();
-			
-			//Log in confirmation
+
+			// Log in confirmation
 			request = new HttpGet("http://www.wildlifecrossing.net/california/");
 			response = client.execute(request);
 			entity = response.getEntity();
@@ -71,36 +69,41 @@ public class MySqlHandler {
 					is, "iso-8859-1"), 8);
 			String line = null;
 			while ((line = reader.readLine()) != null) {
-				if(line.indexOf("login") > 0)
+				if (line.indexOf("login") > 0)
 					findLogin = true;
 			}
-		}  catch (Exception e) {
+		} catch (Exception e) {
 		}
-		if(findLogin)
+		if (findLogin)
 			return false;
-		else 
+		else
 			return true;
 	}
 
-	void sendRecord(String species, String rating, String street, String latitude, String longitude, String date, String time, String duration, String observer) {
+	boolean sendRecord(String species, String rating, String street,
+			String latitude, String longitude, String date, String time,
+			String duration, String observer) {
+
 		String confidence = "Best Guess";
-		if(rating == "1")
+
+		if (rating == "1")
 			confidence = "Best Guess";
-		if(rating == "2")
+		if (rating == "2")
 			confidence = "Somewhat Confident";
-		if(rating == "3")
+		if (rating == "3")
 			confidence = "100% Certain";
-			
+
 		try {
-			
-            //form page
-			request = new HttpGet("http://www.wildlifecrossing.net/california/node/add/roadkill");
+
+			// form page
+			request = new HttpGet(
+					"http://www.wildlifecrossing.net/california/node/add/roadkill");
 			response = client.execute(request);
 			entity = response.getEntity();
 			is = entity.getContent();
-		    reader = new BufferedReader(new InputStreamReader(
-					is, "iso-8859-1"), 8);
-            
+			reader = new BufferedReader(
+					new InputStreamReader(is, "iso-8859-1"), 8);
+
 			StringBuilder sb = new StringBuilder();
 			String line = null;
 			while ((line = reader.readLine()) != null) {
@@ -108,48 +111,64 @@ public class MySqlHandler {
 			}
 			is.close();
 			result = sb.toString();
-			
+
 			Integer index = result.indexOf("form-token");
-			String formToken = result.substring(index+19, index+51);
+			String formToken = result.substring(index + 19, index + 51);
 			Log.d("MySqlHandler", "formToken: " + formToken);
-			
-			//form data
-			nameValuePairs.add(new BasicNameValuePair("form_id", "roadkill_node_form"));
+
+			// form data
+			nameValuePairs.add(new BasicNameValuePair("form_id",
+					"roadkill_node_form"));
 			nameValuePairs.add(new BasicNameValuePair("form_token", formToken));
 			nameValuePairs.add(new BasicNameValuePair("taxonomy[1]", "4"));
-			nameValuePairs.add(new BasicNameValuePair("field_taxon_freetext[0][value]", species));
-			nameValuePairs.add(new BasicNameValuePair("field_id_confidence[value]", confidence));
-			nameValuePairs.add(new BasicNameValuePair("field_geography[0][street]", "From Android Phone"));
-			nameValuePairs.add(new BasicNameValuePair("field_geography[0][locpick][user_longitude]", latitude));
-			nameValuePairs.add(new BasicNameValuePair("field_geography[0][locpick][user_latitude]", longitude));
-			nameValuePairs.add(new BasicNameValuePair("field_date_observation[0][value][date]", time.substring(0, 10)));
-			nameValuePairs.add(new BasicNameValuePair("field_date_observation[0][value][time]", time.substring(11, 16)));
-			nameValuePairs.add(new BasicNameValuePair("field_decay_duration[value]", "0"));
-			nameValuePairs.add(new BasicNameValuePair("field_observer[0][value]", "Joey"));
+			nameValuePairs.add(new BasicNameValuePair(
+					"field_taxon_freetext[0][value]", species));
+			nameValuePairs.add(new BasicNameValuePair(
+					"field_id_confidence[value]", confidence));
+			nameValuePairs.add(new BasicNameValuePair(
+					"field_geography[0][street]", street));
+			nameValuePairs.add(new BasicNameValuePair(
+					"field_geography[0][locpick][user_longitude]", longitude));
+			nameValuePairs.add(new BasicNameValuePair(
+					"field_geography[0][locpick][user_latitude]", latitude));
+			nameValuePairs.add(new BasicNameValuePair(
+					"field_date_observation[0][value][date]", date));
+			nameValuePairs.add(new BasicNameValuePair(
+					"field_date_observation[0][value][time]", time));
+			nameValuePairs.add(new BasicNameValuePair(
+					"field_decay_duration[value]", duration));
+			nameValuePairs.add(new BasicNameValuePair(
+					"field_observer[0][value]", observer));
 			nameValuePairs.add(new BasicNameValuePair("op", "Save"));
-			
-			//post form data
+
+			// post form data
 			post = new HttpPost(
 					"http://www.wildlifecrossing.net/california/node/add/roadkill");
 			post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			response = client.execute(post);
 			entity = response.getEntity();
 			is = entity.getContent();
-			 reader = new BufferedReader(new InputStreamReader(
-					is, "iso-8859-1"), 8);
-			
-		 baf = new ByteArrayBuffer(50);
-             int current = 0;
-            while ((current = reader.read()) != -1) {
-                baf.append((byte) current);
-            }
-           fos = new FileOutputStream("/data/data/edu.ucdavis.cros.roadkill/afterform.txt");
-            fos.write(baf.toByteArray());
-            fos.close();
-			
-			
+			reader = new BufferedReader(
+					new InputStreamReader(is, "iso-8859-1"), 8);
+
+			baf = new ByteArrayBuffer(50);
+			int current = 0;
+			while ((current = reader.read()) != -1) {
+				baf.append((byte) current);
+			}
+			fos = new FileOutputStream(
+					"/data/data/edu.ucdavis.cros.roadkill/afterform.txt");
+			fos.write(baf.toByteArray());
+			fos.close();
+
 		} catch (Exception e) {
 		}
+		return true;
 	}
 
+	void reset() {
+		// reset cookies
+		client = new DefaultHttpClient();
+	}
+	
 }

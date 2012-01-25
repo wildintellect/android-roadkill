@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.widget.LinearLayout;
@@ -52,14 +53,29 @@ public class MapData extends MapActivity {
 		drawable = this.getResources().getDrawable(android.R.drawable.star_on);
 		overlays = new Overlays(drawable, this);
 
-		// creates overlayitem
-		GeoPoint point = new GeoPoint((int) (38.6 * 1000000.0),
-				(int) (-121.1 * 1000000.0));
-		OverlayItem overlayitem = new OverlayItem(point,
-				Double.toString(latitude), Double.toString(longitude));
+		// creates overlay items from records in database
+		OverlayItem overlayitem;
+		GeoPoint point;
+		myDbAdapter myDbHelper = new myDbAdapter(this);
+		myDbHelper.open();
+		Cursor cursor = myDbHelper.allrecords();
+		cursor.moveToFirst();
+
+		while (cursor.isAfterLast() == false) {
+			point = new GeoPoint(
+					(int) (Double.valueOf(cursor.getString(3)) * 1000000.0),
+					(int) (Double.valueOf(cursor.getString(4)) * 1000000.0));
+
+			overlayitem = new OverlayItem(point, cursor.getString(2),
+					cursor.getString(2));
+			overlays.addOverlay(overlayitem);
+			cursor.moveToNext();
+
+		}
+		myDbHelper.close();
+		cursor.close();
 
 		// adds the overlay item to our list
-		overlays.addOverlay(overlayitem);
 		mapOverlays.add(overlays);
 	}
 

@@ -37,32 +37,26 @@ public class ListData extends ListActivity {
 		}
 
 		while (cursor.isAfterLast() == false) {
-			stringList.add(cursor.getString(0) + ": " + cursor.getString(2)
-					+ ", " + cursor.getString(8));
+			stringList.add(cursor.getString(0) + ": " + cursor.getString(2));
 			cursor.moveToNext();
 		}
 
 		this.setListAdapter(new ArrayAdapter<String>(this, R.layout.datarow,
 				stringList));
-		Toast.makeText(this, cursor.getColumnNames().toString(), Toast.LENGTH_LONG).show();
+
 		/*
-		Cursor c = db.rawQuery("SELECT * FROM table WHERE 0", null);
-		try {
-		    String[] columnNames = c.columnNames();
-		} finally {
-		    c.close();
-		}
-		*/
+		 * Cursor c = db.rawQuery("SELECT * FROM table WHERE 0", null); try {
+		 * String[] columnNames = c.columnNames(); } finally { c.close(); }
+		 */
 	}
 
 	protected void onListItemClick(ListView l, View v, int position, long id) {
+		myDbHelper.open();
 		String selection = l.getItemAtPosition(position).toString();
-		cursor = myDbHelper.allrecords();
-
+		cursor = myDbHelper.queryId(selection.substring(0, 1));
 		cursor.moveToFirst();
-		//cursor = myDbHelper.select(selection.substring(0, 1));
-		//cursor.moveToFirst();
-		Toast.makeText(this, cursor.getColumnNames().toString(), Toast.LENGTH_LONG).show();
+		MySqlHandler msh = new MySqlHandler();
+		Toast.makeText(this, cursor.getString(2), Toast.LENGTH_LONG).show();
+		myDbHelper.close();
 	}
-
 }

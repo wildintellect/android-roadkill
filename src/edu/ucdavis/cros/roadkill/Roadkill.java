@@ -37,6 +37,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -46,17 +47,21 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -85,13 +90,15 @@ public class Roadkill extends Activity {
 	private int mYear;
 	private int mMonth;
 	private int mDay;
-	static final int DATE_DIALOG_ID = 1;
 	private int mHour;
 	private int mMinute;
-	static final int TIME_DIALOG_ID = 2;
 
+	static final int DATE_DIALOG_ID = 1;
+	static final int TIME_DIALOG_ID = 2;
 	static final int LOCATION_DIALOG_ID = 3;
-	private StringBuffer timestamp;
+	static final int LOGIN_DIALOG_ID = 4;
+
+	private boolean loginSuccess = false;
 	private RatingBar ratingBar;
 	// private float rating;
 	LocationManager lm = null;
@@ -106,9 +113,8 @@ public class Roadkill extends Activity {
 	private Calendar c;
 	private GPSHandler gh; // create GPSHandler
 	private myDbAdapter myDb; // create database
+	private MySqlHandler msh;
 	private String recordDate;
-
-	MySqlHandler msh;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -116,16 +122,12 @@ public class Roadkill extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.alt);
 
-		// database test
-	//	msh = new MySqlHandler();
-		// msh.sendRecord();
-
 		c = Calendar.getInstance();
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		gh = new GPSHandler(lm, this);
 
 		myDb = new myDbAdapter(this);
-		myDb.open();
+		msh = new MySqlHandler();
 
 		this.photoButton = (ImageButton) findViewById(R.id.photoButton);
 		this.locationButton = (Button) findViewById(R.id.locationButton);
@@ -135,7 +137,6 @@ public class Roadkill extends Activity {
 		this.saveButton = (Button) findViewById(R.id.saveButton);
 		this.ratingBar = (RatingBar) findViewById(R.id.ratingBar1);
 		splist();
-		timestamp = new StringBuffer();
 
 		// update changes to GPS status
 		LocL = new LocationListener() {
@@ -175,6 +176,7 @@ public class Roadkill extends Activity {
 
 	private void splist() {
 		// Set the species list from a database query
+		myDb.open();
 		final ArrayList<String> spplist = myDb.spplist();
 		// startManagingCursor(sppCursor);
 		// String[] from = new String[]{"common"};
@@ -199,6 +201,7 @@ public class Roadkill extends Activity {
 		// adapter.convertToString(sppCursor);
 		this.Species = (AutoCompleteTextView) findViewById(R.id.speciesTextView);
 		this.Species.setAdapter(adapter);
+		myDb.close();
 	}
 
 	// create Options Menu
@@ -212,25 +215,33 @@ public class Roadkill extends Activity {
 	// Option is selected
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// handles the pop up menu
 		switch (item.getItemId()) {
-		case R.id.op_settings:
+		case R.id.op_settings: {
 			Log.i(TAG, "Settings clicked");
 			return true;
-		case R.id.op_upload:
+		}
+		case R.id.op_upload: {
+			/*
+			 * Uploads all records flagged as not uploaded to the site and sets
+			 * the value from "0" to "1"
+			 */
 			Log.i(TAG, "Upload clicked");
+			showDialog(LOGIN_DIALOG_ID);
 			return true;
-		case R.id.op_map:
+		}
+		case R.id.op_map: {
 			Log.i(TAG, "Map clicked");
 			Intent mapIntent = new Intent(Roadkill.this, MapData.class);
 			mapIntent.putExtra(MapData.EXTRA_LATITUDE, LATITUDE);
 			mapIntent.putExtra(MapData.EXTRA_LONGITUDE, LONGITUDE);
 			startActivity(mapIntent);
 			return true;
-		case R.id.op_list:
+		}
+		case R.id.op_list: {
 			Intent dataIntent = new Intent(Roadkill.this, ListData.class);
 			startActivity(dataIntent);
 			return true;
+		}
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -288,6 +299,53 @@ public class Roadkill extends Activity {
 			AlertDialog gpsAlert = builder.create();
 			return gpsAlert;
 		}
+		case LOGIN_DIALOG_ID: {
+			LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+			final View layout = inflater.inflate(R.layout.login,
+					(ViewGroup) findViewById(R.id.root));
+			final EditText user = (EditText) layout.findViewById(R.id.username);
+			final EditText pass = (EditText) layout.findViewById(R.id.password);
+			final TextView error = (TextView) layout
+					.findViewById(R.id.TextView_PwdProblem);
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Wildlifecrossing.net Login");
+			builder.setView(layout);
+			builder.setNegativeButton(android.R.string.cancel,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							removeDialog(LOGIN_DIALOG_ID);
+						}
+					});
+			builder.setPositiveButton(android.R.string.ok,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							String username = user.getText().toString();
+							String password = pass.getText().toString();
+							if (msh.login(username, password)) {
+								loginSuccess = true;
+								upload();
+								Toast.makeText(Roadkill.this,
+										"Upload Complete", Toast.LENGTH_LONG)
+										.show();
+								msh.reset();
+								Log.i(TAG, "Login Successful");
+							} else {
+								loginSuccess = false;
+								Log.i(TAG, "Login Failed");
+								Toast.makeText(Roadkill.this,
+										"Login Failed: Please Try Again",
+										Toast.LENGTH_LONG).show();
+							}
+							removeDialog(LOGIN_DIALOG_ID);
+						}
+					});
+			Log.i(TAG, "Login Done");
+			AlertDialog loginDialog = builder.create();
+			return loginDialog;
+		}
+
 		}
 		return null;
 	}
@@ -501,16 +559,11 @@ public class Roadkill extends Activity {
 			// save data to record, if existing record update information
 			Log.i(TAG, "saveButton.onClick()");
 			Species.performValidation();
-			if (timestamp.length() < 1) {
-				timestamp.append(dateButton.getText());
-				timestamp.append(" ");
-				timestamp.append(timeButton.getText());
-			}
 			String photopath = new String("");
-			// TODO: get real photo path, lat/lon from GPS, implement saving
-			// rating
 			myDb.open();
-			myDb.save(Species.getText().toString(), LATITUDE, LONGITUDE, timestamp.toString(), _path, ratingBar.getRating());
+			myDb.save(Species.getText().toString(), LATITUDE, LONGITUDE,
+					dateButton.getText().toString(), timeButton.getText()
+							.toString(), _path, ratingBar.getRating());
 			myDb.close();
 			Log.i(TAG, "Saved Record");
 			break;
@@ -538,7 +591,7 @@ public class Roadkill extends Activity {
 	@Override
 	public void onStop() { //
 		lm.removeUpdates(LocL);
-		myDb.close();
+		// myDb.close();
 		super.onStop();
 	}
 
@@ -547,7 +600,7 @@ public class Roadkill extends Activity {
 		onRestart();
 		// myDb.open();
 		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, LocL);
-		myDb.open();
+		// myDb.open();
 	}
 
 	@Override
@@ -562,7 +615,27 @@ public class Roadkill extends Activity {
 
 		// myDb.open();
 		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, LocL);
-		myDb.open();
+		// myDb.open();
+	}
+
+	void upload() {
+		if (loginSuccess) {
+			Log.i(TAG, "Uploading Records...");
+			myDb.open();
+			Cursor cursor = myDb.queryUpload();
+			cursor.moveToFirst();
+			while (!cursor.isAfterLast()) {
+				msh.sendRecord(cursor.getString(2), cursor.getString(8),
+						"Android App: To be implemented", cursor.getString(3),
+						cursor.getString(4), cursor.getString(5),
+						cursor.getString(6), "0", "Android App: To be implemented");
+				myDb.setUploaded(cursor.getString(0));
+				cursor.moveToNext();
+			}
+			Toast.makeText(Roadkill.this, "Upload Sucessful",
+					Toast.LENGTH_SHORT).show();
+			myDb.close();
+		}
 	}
 
 };

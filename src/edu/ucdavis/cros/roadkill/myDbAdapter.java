@@ -43,15 +43,15 @@ public class myDbAdapter {
 	public static final String Record_Lon = "lon";
 	public static final String Record_Date = "date";
 	public static final String Record_Time = "time";
-	public static final String Record_Upload = "uploaded";
 	public static final String Record_Photo = "photo";
 	public static final String Record_Rating = "rating";
+	public static final String Record_Upload = "uploaded";
 
 	private final Context myContext;
 
 	private static final String DATABASE_CREATE = "create table records (_id integer primary key autoincrement, "
 			+ "username text not null, species text not null, lat text not null, lon text not null, "
-			+ "date text not null, time text not null, uploaded integer not null, photo text not null, rating real not null);";
+			+ "date text not null, time text not null, photo text not null, rating real not null, uploaded integer not null);";
 
 	private static class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -64,8 +64,8 @@ public class myDbAdapter {
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
-		   // db.execSQL(DATABASE_CREATE);
-			// If database exists do nothing, else copy from assets
+			// database already preloaded in assets folded
+			// db.execSQL(DATABASE_CREATE);
 		}
 
 		public void createDataBase() {
@@ -159,31 +159,49 @@ public class myDbAdapter {
 		 * Query for all records entered by the user, order by time descending
 		 */
 		return mDb.query(DATABASE_TABLE, new String[] { Key_ID, Record_User,
-				Record_Species, Record_Lat, Record_Lon, Record_Time,
-				Record_Upload, Record_Photo, Record_Rating }, null, null, null,
-				null, null);
-	}
-	
-	public Cursor select(String selection) {
-		return mDb.query(DATABASE_TABLE, new String[] { Key_ID, Record_User,
-				Record_Species, Record_Lat, Record_Lon, Record_Time,
-				Record_Upload, Record_Photo, Record_Rating }, Key_ID + "=" + selection, null, null,
-				null, null);
+				Record_Species, Record_Lat, Record_Lon, Record_Date,
+				Record_Time, Record_Photo, Record_Rating, Record_Upload },
+				null, null, null, null, null);
 	}
 
-	public long save(String species, String lat, String lon, String time,
+	public Cursor queryId(String selection) {
+		//Query records for _id
+		return mDb.query(DATABASE_TABLE, new String[] { Key_ID, Record_User,
+				Record_Species, Record_Lat, Record_Lon, Record_Date,
+				Record_Time, Record_Photo, Record_Rating, Record_Upload },
+				Key_ID + "=" + selection, null, null, null, null);
+	}
+	
+	public Cursor queryUpload() {
+		//Query records for _id
+		return mDb.query(DATABASE_TABLE, new String[] { Key_ID, Record_User,
+				Record_Species, Record_Lat, Record_Lon, Record_Date,
+				Record_Time, Record_Photo, Record_Rating, Record_Upload },
+				Record_Upload + "=" + "0", null, null, null, null);
+	}
+
+	public boolean save(String species, String lat, String lon, String date, String time,
 			String photopath, float rating) {
 		// Should this be a boolean so it will return true if it works?
 		ContentValues initialValues = new ContentValues();
 		initialValues.put(Record_User, "me");
 		initialValues.put(Record_Species, species);
 		initialValues.put(Record_Lat, lat);
-		initialValues.put(Record_Lon, lon);;
+		initialValues.put(Record_Lon, lon);
+		initialValues.put(Record_Date, date);
 		initialValues.put(Record_Time, time);
-		initialValues.put(Record_Upload, "0");
 		initialValues.put(Record_Photo, photopath);
 		initialValues.put(Record_Rating, rating);
-
-		return mDb.insert(DATABASE_TABLE, null, initialValues);
+		initialValues.put(Record_Upload, "0");
+		return mDb.insert(DATABASE_TABLE, null, initialValues) > 0;
 	}
+	
+	public boolean setUploaded(String recordKey) {
+		// update the record as being uploaded
+		ContentValues newValues = new ContentValues();
+		newValues.put(Record_Upload, "1");
+		return mDb.update(DATABASE_TABLE, newValues, Key_ID + "=" + recordKey, null) > 0;
+
+	}
+	
 }
