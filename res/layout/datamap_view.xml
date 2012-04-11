@@ -6,6 +6,6 @@
     android:layout_height="fill_parent"
     android:clickable="true"
     android:enabled="true"
-    android:apiKey="0HKHBj9Klo4pD1X_lAeP_DewYkfepEc2ZKlry5g"
+    android:apiKey="YourKeyHere"
 />
 
