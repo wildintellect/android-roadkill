@@ -8,11 +8,11 @@
     <edu.ucdavis.cros.roadkill.TransparentPanel
         android:id="@+id/transparent_panel"
         android:layout_width="fill_parent"
-        android:layout_height="50px"
-        android:paddingBottom="5px"
-        android:paddingLeft="5px"
-        android:paddingRight="5px"
-        android:paddingTop="5px" >
+        android:layout_height="50dp"
+        android:paddingBottom="5dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingTop="5dp" >
 
         <Button
             android:id="@+id/select"
@@ -34,16 +34,17 @@
             android:id="@+id/mapview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:apiKey="0HKHBj9Klo4pD1X_lAeP_DewYkfepEc2ZKlry5g"
+            android:apiKey="0YaXv2UAqcUB0G3VU7ofUHucZkQGReF0WXQCVKg"
             android:clickable="true"
-            android:enabled="true" />
+            android:state_enabled="true" />
 
         <ImageView
             android:id="@+id/drag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/pin"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:contentDescription="@string/pin" />
     </RelativeLayout>
 
 </LinearLayout>
