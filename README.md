@@ -1,6 +1,8 @@
 Android Roadkill
 ================
-![zoom_previews](https://github.com/wildintellect/android-roadkill/blob/master/res/drawable-hdpi/roadie.png)
+
+![logo](https://github.com/wildintellect/android-roadkill/blob/master/res/drawable-hdpi/roadie.png "Logo")
+
 About
 ---------
 Alex Mandel and Paul Haverkamp 
