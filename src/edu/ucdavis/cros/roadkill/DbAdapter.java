@@ -31,6 +31,8 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQueryBuilder;
+import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 public class DbAdapter {
@@ -153,8 +155,20 @@ public class DbAdapter {
 	 * Various database queries as functions Includes inserts for new records
 	 */
 	public ArrayList<String> spplist() {
+		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+		String[] subQueries = new String[] {
+				"SELECT '0' as _id, category as common FROM roadkill.species GROUP BY category UNION", 
+				"SELECT '00' as _id, subcat as common FROM roadkill.species GROUP BY subcat",
+				"SELECT _id,common FROM roadkill.species"
+		//		"SELECT " + projectionStr + " FROM " + Customer.TABLE_NAME,
+		//	    "SELECT " + projectionStr + " FROM "
+		//	     + IndividualCustomer.TABLE_NAME 
+				};
+		//sortOrder is the orderby part of SQL
+		String sortOrder = "common";
+		String sql = qb.buildUnionQuery(subQueries, sortOrder, null);
 		Cursor results = mDb.rawQuery(
-				"SELECT _id,common FROM species ORDER BY common", null);
+				sql, null);
 		// Cursor mCursor = myDataBase.query("allspp",new String[] {"list"},
 		// null, null, null, null, null);
 		// return mDb.query("allspp",new String[] {LOOKUP}, null, null, null,

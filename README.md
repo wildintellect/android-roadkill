@@ -1,10 +1,12 @@
 Android Roadkill
 ================
-
+![zoom_previews](https://github.com/wildintellect/android-roadkill/blob/master/res/drawable-hdpi/roadie.png)
 About
 ---------
 Alex Mandel and Paul Haverkamp 
-Copyright 2011
+Copyright 2011-2012
+
+Contributions from Joey Ng and Michele Tobias
 
 Device portion of a Citizen Science app for reporting wildlife (or anything else).
 Originally a class project to learn how to make an Android app.
@@ -19,7 +21,7 @@ Notes
 ------
 You will need to get your own google maps api key for the map to load properly.
 http://code.google.com/android/add-ons/google-apis/mapkey.html
-Copy and Paste into datamap_view.xml
+Copy and Paste into datamap_view.xml,mapdata.xml,mapchoose.xml
 
 License
 ------

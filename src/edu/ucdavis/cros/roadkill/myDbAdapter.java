@@ -13,6 +13,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 
 public class myDbAdapter {
@@ -135,12 +136,20 @@ public class myDbAdapter {
 	 * Various database queries as functions Includes inserts for new records
 	 */
 	public ArrayList<String> spplist() {
+		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+		String[] subQueries = new String[] {
+				"SELECT min(_id)+1000 as _id, category || ' unknown' as common FROM species WHERE category NOT null GROUP BY category", 
+				"SELECT min(_id)+2000 as _id, subcat || ' unknown' as common FROM species WHERE subcat NOT null GROUP BY subcat",
+				"SELECT _id,common FROM species"
+		//		"SELECT " + projectionStr + " FROM " + Customer.TABLE_NAME,
+		//	    "SELECT " + projectionStr + " FROM "
+		//	     + IndividualCustomer.TABLE_NAME 
+				};
+		//sortOrder is the orderby part of SQL
+		String sortOrder = "common";
+		String sql = qb.buildUnionQuery(subQueries, sortOrder, null);
 		Cursor results = mDb.rawQuery(
-				"SELECT _id,common FROM species ORDER BY common", null);
-		// Cursor mCursor = myDataBase.query("allspp",new String[] {"list"},
-		// null, null, null, null, null);
-		// return mDb.query("allspp",new String[] {LOOKUP}, null, null, null,
-		// null, null);
+				sql, null);
 		Log.i(TAG, "Query of species done.");
 		int count = results.getCount();
 		Log.i(TAG, String.valueOf(count));
