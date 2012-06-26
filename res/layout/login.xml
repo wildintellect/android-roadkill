@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:id="@+id/TextView_Pwd1"
-        android:text="Username:"
+        android:text="@string/username"
         android:textStyle="bold" />
     <EditText
         android:layout_height="wrap_content"
@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:id="@+id/TextView_Pwd2"
-        android:text="Password:"
+        android:text="@string/password"
         android:textStyle="bold" />
     <EditText
         android:layout_height="wrap_content"

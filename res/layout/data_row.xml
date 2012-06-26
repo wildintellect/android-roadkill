@@ -5,14 +5,14 @@
 		<TextView android:text="@+id/TextView01" 
 				  android:textColor="#FFFFFF" 
 				  android:id="@+id/label" 
-				  android:textSize="14px" 
+				  android:textSize="14dp" 
 				  android:layout_width="fill_parent" 
-				  android:layout_marginTop="6px" 
-				  android:layout_marginLeft="2px"
-				  android:layout_marginRight="2px"
+				  android:layout_marginTop="6dp" 
+				  android:layout_marginLeft="2dp"
+				  android:layout_marginRight="2dp"
 				  android:layout_height="match_parent"></TextView>
 		<LinearLayout android:id="@+id/linearLayout2" android:layout_height="match_parent" android:orientation="vertical" android:layout_width="match_parent">
-			<TextView android:text="@+id/TextView02" android:textColor="#FFFFFF" android:id="@+id/timestamp" android:textSize="8px" android:layout_height="wrap_content" android:layout_marginTop="6px" android:layout_width="match_parent"></TextView>
+			<TextView android:text="@+id/TextView02" android:textColor="#FFFFFF" android:id="@+id/timestamp" android:textSize="8dp" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:layout_width="match_parent"></TextView>
 		</LinearLayout>
 	</LinearLayout>
 </LinearLayout>
