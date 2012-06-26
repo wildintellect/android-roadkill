@@ -1,7 +1,7 @@
 Android Roadkill
 ================
 
-![logo](https://github.com/wildintellect/android-roadkill/blob/master/res/drawable-hdpi/roadie.png "Logo")
+![logo](https://github.com/wildintellect/android-roadkill/raw/master/res/drawable-hdpi/roadie.png "Logo")
 
 About
 ---------
